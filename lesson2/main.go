@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 var (
 	red   = "red"
@@ -9,7 +12,7 @@ var (
 )
 
 type Room struct {
-	Name     string
+	Name     string `json:"room_name"`
 	Area     float64
 	color    string
 	nextRoom *Room
@@ -26,10 +29,11 @@ func main() {
 		color:    blue,
 		nextRoom: &bathroom,
 	}
-
 	fmt.Println(bathroom, bedroom)
-
 	printWhite()
+
+	msg, _ := json.Marshal(bathroom)
+	fmt.Println(string(msg))
 }
 
 func printWhite() {
