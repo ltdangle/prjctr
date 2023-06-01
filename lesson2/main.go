@@ -15,7 +15,7 @@ type Room struct {
 	Name     string `json:"room_name"`
 	Area     float64
 	color    string
-	nextRoom *Room
+	NextRoom *Room
 }
 
 func main() {
@@ -27,12 +27,13 @@ func main() {
 	bedroom := Room{
 		Name:     "Bedroom",
 		color:    blue,
-		nextRoom: &bathroom,
+		NextRoom: &bathroom,
 	}
 	fmt.Println(bathroom, bedroom)
 	printWhite()
 
-	msg, _ := json.Marshal(bathroom)
+	msg, _ := json.Marshal(bedroom)
+	fmt.Println("Json:-----------------------------")
 	fmt.Println(string(msg))
 }
 
