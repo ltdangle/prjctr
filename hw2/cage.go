@@ -2,44 +2,44 @@ package main
 
 // Cage.
 type cage struct {
-	height      int
-	length      int
-	width       int
-	animalCount int
+	Height      int `json:"height"`
+	Length      int `json:"length"`
+	Width       int `json:"width"`
+	AnimalCount int `json:"animalCount"`
 }
 
-func (c cage) setDimensions(height int, length int, width int) {
-	c.height = height
-	c.length = length
-	c.width = width
+func (c *cage) setDimensions(height int, length int, width int) {
+	c.Height = height
+	c.Length = length
+	c.Width = width
 }
 
 // Wolf cage.
 type wolfCage struct {
 	cage
-	animal wolf
+	Animal wolf
 }
 
 // Fox cage.
 type foxCage struct {
 	cage
-	animal fox
+	Animal fox
 }
 
 // Elephant cage.
 type elephantCage struct {
 	cage
-	animal elephant
+	Animal elephant
 }
 
 // Zebra cage.
 type zebraCage struct {
 	cage
-	animal zebra
+	Animal zebra
 }
 
 // Pantera cage.
 type panteraCage struct {
 	cage
-	animal pantera
+	Animal pantera
 }

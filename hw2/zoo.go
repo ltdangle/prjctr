@@ -1,10 +1,11 @@
 package main
 
 type zoo struct {
-	wolfCage     *wolfCage
-	foxCage      *foxCage
-	elephantCage *elephantCage
-	zebraCage    *zebraCage
-	panteraCage  *panteraCage
-	zookeeper    *zookeeper
+	Name         string `json:"zooName"`
+	WolfCage     *wolfCage
+	FoxCage      *foxCage
+	ElephantCage *elephantCage
+	ZebraCage    *zebraCage
+	PanteraCage  *panteraCage
+	Zookeeper    *zookeeper
 }

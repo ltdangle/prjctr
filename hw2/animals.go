@@ -2,10 +2,17 @@ package main
 
 // Animal.
 type animal struct {
+	name string
 }
 
 func (a animal) whoami() string {
 	return "I am an animal."
+}
+func (a animal) setName(name string) {
+	a.name = name
+}
+func (a animal) getName() string {
+	return a.name
 }
 
 // Wolf.
