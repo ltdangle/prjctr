@@ -8,10 +8,15 @@ import (
 func main() {
 	// Create animals.
 	wolf := wolf{}
+	wolf.Kind = "Forets wofl"
 	fox := fox{}
+	fox.Kind = "Wild fox"
 	elephant := elephant{}
+	elephant.Kind = "African elephant"
 	zebra := zebra{}
+	zebra.Kind = "Striped zebra"
 	pantera := pantera{}
+	pantera.Kind = "black panther"
 
 	// Create cages.
 	cage1 := &wolfCage{Animal: wolf}
@@ -35,7 +40,7 @@ func main() {
 	cage5.AnimalCount = 3
 
 	// Create zookeper.
-	keeper := &zookeeper{name: "Semen"}
+	keeper := &zookeeper{Name: "Zookeper"}
 
 	//Create zoo.
 	var zoo zoo = zoo{
@@ -48,7 +53,10 @@ func main() {
 		Zookeeper:    keeper,
 	}
 
-	//Print zoo json.
+	// Convert zoo to json.
 	zooJson, _ := json.MarshalIndent(zoo, "", " ")
+
+	// Print.
 	fmt.Println(string(zooJson))
+
 }
