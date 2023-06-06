@@ -5,7 +5,12 @@ type cage struct {
 	Height      int `json:"height"`
 	Length      int `json:"length"`
 	Width       int `json:"width"`
+	Animal      animal
 	AnimalCount int `json:"animalCount"`
+}
+
+func newCage(height int, length int, width int) *cage {
+	return &cage{Height: height, Length: length, Width: width}
 }
 
 func (c *cage) setDimensions(height int, length int, width int) {
