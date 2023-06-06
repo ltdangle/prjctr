@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
-	// "ifelse/ifelse"
-	"math/rand"
-	"time"
+// "fmt"
+// "ifelse/ifelse"
+// "math/rand"
+// "time"
 )
 
 func main() {
@@ -15,13 +15,17 @@ func main() {
 	// 	fmt.Println("branch two")
 	// }
 
-	rand.Seed(time.Now().UnixNano())
-	switch i := rand.Intn(10); i % 2 {
-	case 0, 5:
-		fmt.Println(i, 0)
-	case 1:
-		fmt.Println(i, 1)
-	default:
-		fmt.Println("Default case")
+	// rand.Seed(time.Now().UnixNano())
+	// switch i := rand.Intn(10); i % 2 {
+	// case 0, 5:
+	// 	fmt.Println(i, 0)
+	// case 1:
+	// 	fmt.Println(i, 1)
+	// default:
+	// 	fmt.Println("Default case")
+	// }
+
+	for {
+		break
 	}
 }
