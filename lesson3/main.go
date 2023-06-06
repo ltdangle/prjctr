@@ -34,6 +34,10 @@ func main() {
 	// fmt.Println("...End")
 
 	var n int
+	fmt.Println("Enter n: ")
+	fmt.Scan(&n)
+
+	// while loop
 	for n != 2 {
 		n = rand.Intn(10)
 		fmt.Println(n)
