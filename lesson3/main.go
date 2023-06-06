@@ -28,8 +28,14 @@ func main() {
 	// 	fmt.Println("Default case")
 	// }
 
-	for n := 0; n != 2; n = rand.Intn(10) {
+	// for n := 0; n != 2; n = rand.Intn(10) {
+	// 	fmt.Println(n)
+	// }
+	// fmt.Println("...End")
+
+	var n int
+	for n != 2 {
+		n = rand.Intn(10)
 		fmt.Println(n)
 	}
-	fmt.Println("...End")
 }
