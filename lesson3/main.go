@@ -1,11 +1,14 @@
 package main
 
 import (
+	"fmt"
+	"math/rand"
+)
+
 // "fmt"
 // "ifelse/ifelse"
 // "math/rand"
 // "time"
-)
 
 func main() {
 	// shouldPrint := true
@@ -26,6 +29,12 @@ func main() {
 	// }
 
 	for {
-		break
+		n := rand.Intn(10)
+		fmt.Println(n)
+
+		if n == 2 {
+			break
+		}
 	}
+	fmt.Println("...End")
 }
