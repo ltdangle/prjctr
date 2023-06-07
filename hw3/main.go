@@ -24,6 +24,11 @@ func main() {
 			continue
 		}
 
+		// Validate input.
+		if choice < 0 || choice > len(scenario.next)-1 {
+			continue
+		}
+
 		scenario = scenario.next[choice]
 	}
 	fmt.Printf("%s\n", scenario.description)
