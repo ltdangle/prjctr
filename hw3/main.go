@@ -9,6 +9,8 @@ func main() {
 	for scene.hasNextScene() {
 		// Print description.
 		fmt.Println()
+		fmt.Println("You are here: " + breadcrumbs(scene))
+		fmt.Println()
 		fmt.Printf("%s\n\n", scene.description)
 
 		// Print next available actions.
@@ -20,7 +22,7 @@ func main() {
 		fmt.Print("\nSelect next action or type -1 to go back: ")
 		fmt.Scan(&choice)
 		fmt.Print("\n")
-		printDoubleLine()
+		fmt.Println(doubleLine())
 
 		// Go back.
 		if choice == -1 {
@@ -42,8 +44,18 @@ func main() {
 	// The end.
 	fmt.Printf("%s\n", scene.description)
 	fmt.Println("The end!")
-
 }
-func printDoubleLine() {
-	fmt.Println("======================================")
+
+func breadcrumbs(s *scene) string {
+	var breadcrumbs string
+	for s.hasPreviousScene() {
+		breadcrumbs = s.name + " > " + breadcrumbs
+		s = s.gotoPreviousScene()
+	}
+	breadcrumbs = s.name + " > " + breadcrumbs
+	return breadcrumbs
+}
+
+func doubleLine() string {
+	return "======================================"
 }
