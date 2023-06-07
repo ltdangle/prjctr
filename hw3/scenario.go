@@ -24,12 +24,20 @@ func (s *scene) hasNextScene() bool {
 	}
 	return false
 }
-func (s *scene) countNextScene() int {
+func (s *scene) nextSceneCount() int {
 	if len(s.next) == 0 {
 		return 0
 	}
 	return len(s.next) - 1
 }
+
+func (s *scene) hasPreviousScene() bool {
+	if s.previous == nil {
+		return false
+	}
+	return true
+}
+
 func scenario() *scene {
 	cave := &scene{
 		name:        "Cave entrance",

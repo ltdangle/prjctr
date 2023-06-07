@@ -7,20 +7,24 @@ func main() {
 	var choice int
 	scenario := scenario()
 	for scenario.hasNextScene() {
+		// Print description.
 		fmt.Println()
 		fmt.Printf("%s\n\n", scenario.description)
+
+		// Print next available actions.
 		for i, next := range scenario.next {
 			fmt.Printf("%d: %s\n", i, next.action)
 		}
 
+		// Get user input.
 		fmt.Print("\nSelect next action or type -1 to go back: ")
 		fmt.Scan(&choice)
 		fmt.Print("\n")
-		doubleLine()
+		printDoubleLine()
 
 		// Go back.
 		if choice == -1 {
-			if scenario.previous != nil {
+			if scenario.hasPreviousScene() {
 				scenario = scenario.previous
 				continue
 			}
@@ -28,7 +32,7 @@ func main() {
 		}
 
 		// Validate input.
-		if choice < 0 || choice > scenario.countNextScene() {
+		if choice < 0 || choice > scenario.nextSceneCount() {
 			continue
 		}
 
@@ -39,6 +43,6 @@ func main() {
 	fmt.Println("The end!")
 
 }
-func doubleLine() {
+func printDoubleLine() {
 	fmt.Println("======================================")
 }
