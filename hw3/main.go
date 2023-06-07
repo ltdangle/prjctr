@@ -7,15 +7,18 @@ func main() {
 	var choice int
 	scenario := scenario()
 	for len(scenario.next) > 0 {
-
-		fmt.Println(scenario.description)
+		fmt.Println()
+		fmt.Printf("%s\n\n", scenario.description)
 		for i, next := range scenario.next {
 			fmt.Printf("%d: %s\n", i, next.action)
 		}
 
-		fmt.Print("Select next action or type -1 to go back: ")
+		fmt.Print("\nSelect next action or type -1 to go back: ")
 		fmt.Scan(&choice)
+		fmt.Print("\n")
+		doubleLine()
 
+		// Go back.
 		if choice == -1 {
 			if scenario.previous != nil {
 				scenario = scenario.previous
@@ -31,6 +34,14 @@ func main() {
 
 		scenario = scenario.next[choice]
 	}
+
 	fmt.Printf("%s\n", scenario.description)
 	fmt.Println("The end!")
+
+}
+func doubleLine() {
+	fmt.Println("======================================")
+}
+func singleLine() {
+	fmt.Println("--------------------------------------")
 }
