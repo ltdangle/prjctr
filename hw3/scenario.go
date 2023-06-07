@@ -37,6 +37,9 @@ func (s *scene) hasPreviousScene() bool {
 	}
 	return true
 }
+func (s *scene) gotoNextScene(sceneIndex int) *scene {
+	return s.next[sceneIndex]
+}
 
 func scenario() *scene {
 	cave := &scene{

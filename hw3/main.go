@@ -5,14 +5,14 @@ import "fmt"
 func main() {
 	// Game loop.
 	var choice int
-	scenario := scenario()
-	for scenario.hasNextScene() {
+	scene := scenario()
+	for scene.hasNextScene() {
 		// Print description.
 		fmt.Println()
-		fmt.Printf("%s\n\n", scenario.description)
+		fmt.Printf("%s\n\n", scene.description)
 
 		// Print next available actions.
-		for i, next := range scenario.next {
+		for i, next := range scene.next {
 			fmt.Printf("%d: %s\n", i, next.action)
 		}
 
@@ -24,22 +24,23 @@ func main() {
 
 		// Go back.
 		if choice == -1 {
-			if scenario.hasPreviousScene() {
-				scenario = scenario.previous
+			if scene.hasPreviousScene() {
+				scene = scene.previous
 				continue
 			}
 			continue
 		}
 
 		// Validate input.
-		if choice < 0 || choice > scenario.nextSceneCount() {
+		if choice < 0 || choice > scene.nextSceneCount() {
 			continue
 		}
 
-		scenario = scenario.next[choice]
+		scene = scene.gotoNextScene(choice)
 	}
 
-	fmt.Printf("%s\n", scenario.description)
+	// The end.
+	fmt.Printf("%s\n", scene.description)
 	fmt.Println("The end!")
 
 }
