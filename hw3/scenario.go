@@ -22,7 +22,7 @@ func scenario() *scene {
 	cave := &scene{
 		name:        "Cave entrance",
 		action:      "Go to the front of the cave",
-		description: "You woke up near the cave entrance. You see a backpack nearby. There are matches, lighter, and a knife in the backpack. To the left you see a trail that leads into the forest. To the right you see a trail that disapears into horizon.",
+		description: "You woke up near the cave entrance. You see a backpack nearby. There are matches, lighter, and a knife in the backpack. To the left you see a trail that leads into the forest. To the right you see a trail that disapears into meadow.",
 	}
 	forest := &scene{
 		name:        "Forest",
@@ -44,8 +44,26 @@ func scenario() *scene {
 		action:      "Pick a safe",
 		description: "You try different letter combinations. Finally, the safe opens. A large insect crawls out of the safe, bites you, and runs away. You loose consciousness. It could've ended differently, very differently indeed.",
 	}
+	meadow := &scene{
+		name:        "Meadow",
+		action:      "Go to the meadow",
+		description: "You see a well in the middle of the meadow. You notice that you haven't had water for a while and you are quite thirsty. You also see a showel to your left and marks of freshly dug earth.",
+	}
+	well := &scene{
+		name:        "Well",
+		action:      "Drink from the well",
+		description: "You decide to quench your thirst by drinking from the well. Instead of satisfaction, you feel nauseaus and you pass out. The well was poisoned. ",
+	}
+	hole := &scene{
+		name:        "Hole in the ground",
+		action:      "Dig a hole in the ground where marks are",
+		description: "You dig a whole in the ground using the showel you find. There is something at the bottom! It is a chest full of treasure!",
+	}
 
 	cave.addNextScene(forest)
+	cave.addNextScene(meadow)
+	meadow.addNextScene(well)
+	meadow.addNextScene(hole)
 	forest.addNextScene(camp)
 	camp.addNextScene(tent)
 	tent.addNextScene(safe)
