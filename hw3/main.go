@@ -7,16 +7,7 @@ func main() {
 	var choice int
 	scene := scenario()
 	for scene.hasNextScene() {
-		// Print description.
-		fmt.Println()
-		fmt.Println("You are here: " + breadcrumbs(scene))
-		fmt.Println()
-		fmt.Printf("%s\n\n", scene.description)
-
-		// Print next available actions.
-		for i, next := range scene.next {
-			fmt.Printf("%d: %s\n", i, next.action)
-		}
+		printScene(scene)
 
 		// Get user input.
 		fmt.Print("\nSelect next action or type -1 to go back: ")
@@ -38,12 +29,26 @@ func main() {
 			continue
 		}
 
+		// Goto next scene.
 		scene = scene.gotoNextScene(choice)
 	}
 
 	// The end.
-	fmt.Printf("%s\n", scene.description)
+	printScene(scene)
 	fmt.Println("The end!")
+}
+
+func printScene(scene *scene) {
+	// Print description.
+	fmt.Println()
+	fmt.Println("You are here: " + breadcrumbs(scene))
+	fmt.Println()
+	fmt.Printf("%s\n\n", scene.description)
+
+	// Print next available actions.
+	for i, next := range scene.next {
+		fmt.Printf("%d: %s\n", i, next.action)
+	}
 }
 
 func breadcrumbs(s *scene) string {
