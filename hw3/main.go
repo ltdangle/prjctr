@@ -3,9 +3,10 @@ package main
 import "fmt"
 
 func main() {
+	scene := scenario()
+
 	// Game loop.
 	var choice int
-	scene := scenario()
 	for scene.hasNextScene() {
 		printScene(scene)
 
