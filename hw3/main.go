@@ -6,7 +6,7 @@ func main() {
 	// Game loop.
 	var choice int
 	scenario := scenario()
-	for len(scenario.next) > 0 {
+	for scenario.hasNextScene() {
 		fmt.Println()
 		fmt.Printf("%s\n\n", scenario.description)
 		for i, next := range scenario.next {
@@ -28,7 +28,7 @@ func main() {
 		}
 
 		// Validate input.
-		if choice < 0 || choice > len(scenario.next)-1 {
+		if choice < 0 || choice > scenario.countNextScene() {
 			continue
 		}
 
@@ -41,7 +41,4 @@ func main() {
 }
 func doubleLine() {
 	fmt.Println("======================================")
-}
-func singleLine() {
-	fmt.Println("--------------------------------------")
 }

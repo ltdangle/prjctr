@@ -18,6 +18,18 @@ func (s *scene) addNextScene(scene *scene) {
 	s.next = append(s.next, scene)
 }
 
+func (s *scene) hasNextScene() bool {
+	if len(s.next) > 0 {
+		return true
+	}
+	return false
+}
+func (s *scene) countNextScene() int {
+	if len(s.next) == 0 {
+		return 0
+	}
+	return len(s.next) - 1
+}
 func scenario() *scene {
 	cave := &scene{
 		name:        "Cave entrance",
