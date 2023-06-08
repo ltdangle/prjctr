@@ -1,7 +1,9 @@
 package main
 
-import "webinar/pkg"
+import (
+	"webinar/array"
+)
 
 func main() {
-	pkg.Print()
+	array.PrintArray()
 }
