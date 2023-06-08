@@ -5,12 +5,18 @@ import "fmt"
 func printArray(a [3]int) {
 	fmt.Println(a, len(a), cap(a))
 }
+
 func PrintArray() {
 	var a [3]int = [...]int{1, 2, 3}
-	printArray(a)
+	// printArray(a)
 
 	var b [3]int = a
 	b[0] = 5
-	printArray(a)
+	// printArray(a)
+	// printArray(b)
+
+	s := b[:]
+	s[0] = 101
+	fmt.Println(s)
 	printArray(b)
 }
