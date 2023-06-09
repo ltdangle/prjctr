@@ -20,3 +20,6 @@ func PrintArray() {
 	fmt.Println(s)
 	printArray(b)
 }
+func PrintSlice() {
+	// s := []string{"first", "second", "third"}
+}
