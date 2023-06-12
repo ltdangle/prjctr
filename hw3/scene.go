@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type scene struct {
 	// Scene name.
 	name string
@@ -47,4 +49,27 @@ func (s *scene) gotoPreviousScene() *scene {
 		return s.previous
 	}
 	return nil
+}
+func (s *scene) String() string {
+	var str string
+	str += "\n"
+	str += "You are here: " + s.breadcrumbs()
+	str += "\n\n"
+	str += fmt.Sprintf("%s\n\n", s.description)
+
+	// Print next available actions.
+	for i, next := range s.next {
+		str += fmt.Sprintf("%d: %s\n", i, next.action)
+	}
+	return str
+}
+
+func (s *scene) breadcrumbs() string {
+	var breadcrumbs string
+	for s.hasPreviousScene() {
+		breadcrumbs = s.name + " > " + breadcrumbs
+		s = s.gotoPreviousScene()
+	}
+	breadcrumbs = s.name + " > " + breadcrumbs
+	return breadcrumbs
 }
