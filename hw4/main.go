@@ -16,13 +16,11 @@ func main() {
 		switch choice {
 		case "e":
 			e := &editor.Editor{}
-			e.ReadIntput()
-			e.ReadSearchString()
-			e.PrintSearchResults()
+			e.Run()
 			os.Exit(0)
 		case "r":
 			r := &rating.Rating{}
-			r.Loop()
+			r.Run()
 			os.Exit(0)
 		case "q":
 			os.Exit(0)

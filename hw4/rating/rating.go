@@ -18,15 +18,15 @@ type Rating struct {
 	gradeAvg Grade
 }
 
-func (r *Rating) SetCourse(course string) {
+func (r *Rating) setCourse(course string) {
 	r.course = course
 }
 
-func (r *Rating) AddGrade(grade Grade) {
+func (r *Rating) addGrade(grade Grade) {
 	r.grades = append(r.grades, grade)
 }
 
-func (r *Rating) AddGradeFromString(gradeStr string) error {
+func (r *Rating) addGradeFromString(gradeStr string) error {
 	grade, err := strconv.ParseFloat(gradeStr, 32)
 	if err != nil {
 		return errors.New("Wrong grade format. " + err.Error())
@@ -36,7 +36,7 @@ func (r *Rating) AddGradeFromString(gradeStr string) error {
 		return errors.New("Grade cannot be negative.")
 	}
 
-	r.AddGrade(Grade(grade))
+	r.addGrade(Grade(grade))
 
 	return nil
 }
@@ -50,7 +50,7 @@ func (r *Rating) calculateGradeAverage() {
 	r.gradeAvg = gradeSum / Grade(len(r.grades))
 }
 
-func (r *Rating) Loop() {
+func (r *Rating) Run() {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	// Read course title.
@@ -69,7 +69,7 @@ loop:
 		case "-1":
 			break loop
 		default:
-			err := r.AddGradeFromString(gradeStr)
+			err := r.addGradeFromString(gradeStr)
 			if err != nil {
 				fmt.Println(err)
 				continue

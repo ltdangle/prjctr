@@ -13,7 +13,7 @@ type Editor struct {
 	matchingLines []int
 }
 
-func (e *Editor) ReadIntput() {
+func (e *Editor) readIntput() {
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Println("Please enter some text. When you're done, press Ctrl+D (or Ctrl+Z in Windows):")
 
@@ -21,7 +21,7 @@ func (e *Editor) ReadIntput() {
 		e.text = append(e.text, scanner.Text())
 	}
 }
-func (e *Editor) ReadSearchString() {
+func (e *Editor) readSearchString() {
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("\nSearch string: ")
 	scanner.Scan()
@@ -33,7 +33,7 @@ func (e *Editor) ReadSearchString() {
 		}
 	}
 }
-func (e *Editor) PrintSearchResults() {
+func (e *Editor) printSearchResults() {
 	if len(e.matchingLines) == 0 {
 		fmt.Println("No matches found!")
 		return
@@ -42,4 +42,9 @@ func (e *Editor) PrintSearchResults() {
 	for _, lineNumber := range e.matchingLines {
 		fmt.Printf("%d: %s\n", lineNumber, e.text[lineNumber])
 	}
+}
+func (e *Editor) Run() {
+	e.readIntput()
+	e.readSearchString()
+	e.printSearchResults()
 }
