@@ -1,10 +1,33 @@
 package main
 
-import "hw4/editor"
+import (
+	"fmt"
+	"hw4/editor"
+	"hw4/rating"
+	"os"
+)
 
 func main() {
-	e := &editor.Editor{}
-	e.ReadIntput()
-	e.ReadSearchString()
-	e.PrintSearchResults()
+	var choice string
+	for {
+		fmt.Print("Run (e)ditor, student (r)atings, or (q)uit? ")
+
+		fmt.Scanln(&choice)
+		switch choice {
+		case "e":
+			e := &editor.Editor{}
+			e.ReadIntput()
+			e.ReadSearchString()
+			e.PrintSearchResults()
+			os.Exit(0)
+		case "r":
+			r := &rating.Rating{}
+			r.Loop()
+			os.Exit(0)
+		case "q":
+			os.Exit(0)
+		default:
+			fmt.Println("You have to type \"e\" or \"r\" or \"q\".")
+		}
+	}
 }
