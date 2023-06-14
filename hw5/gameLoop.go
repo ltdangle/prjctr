@@ -29,22 +29,36 @@ func (l *gameLoop) run() {
 }
 
 func (l *gameLoop) makeMoves() {
+	var error string
 	scanner := bufio.NewScanner(os.Stdin)
 	for l.game.hasEmptyCells() {
 		l.clearScreen()
 
 		l.drawGrid()
 
+		// Print error, if any.
+		if error != "" {
+			fmt.Println("Error: " + error)
+		}
+
 		fmt.Print("Player " + l.currentTurnPlayer.name + " choose your cell (row,col): ")
 		scanner.Scan()
 
-		// Validate coordinate input.
+		// Validate coordinates input.
 		row, col, isValid := l.validateCoordInput(scanner.Text())
 		if !isValid {
+			error = "Incorrect coordinates."
 			continue
+		} else {
+			error = ""
 		}
 
-		l.game.Set(l.currentTurnPlayer, row, col)
+		err := l.game.Set(l.currentTurnPlayer, row, col)
+		if err != nil {
+			error = err.Error()
+		} else {
+			error = ""
+		}
 
 		// Pass turn to the other player.
 		if l.currentTurnPlayer == l.player1 {

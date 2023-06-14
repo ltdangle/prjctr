@@ -18,6 +18,12 @@ func (g *game) Set(player *player, row int, col int) error {
 	if !g.hasEmptyCells() {
 		return errors.New("No more empty cells. The game is finished.")
 	}
+
+	// Check if the cell is taken
+	if g.grid[row][col].value != 0 {
+		return errors.New("Cell is already taken.")
+	}
+
 	g.grid[row][col].value = player.value
 	return nil
 }
