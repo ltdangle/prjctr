@@ -1,6 +1,8 @@
 package main
 
-import "errors"
+import (
+	"errors"
+)
 
 type game struct{ grid *grid }
 
@@ -53,13 +55,21 @@ func (g *game) hasEmptyCells() bool {
 	return false
 }
 
-func (g *game) WhoWon() (gameEnded bool, winner string) {
-	if g.hasEmptyCells() {
-		return
+func (g *game) WhoWon() *player {
+	// Calculate rows.
+	var rowSum int
+	for _, row := range g.grid {
+		for _, cell := range row {
+			rowSum += cell.value
+		}
+		if rowSum == playerX.winningSumRows {
+			return playerX
+		}
+		if rowSum == playerO.winningSumRows {
+			return playerO
+		}
+		rowSum = 0
 	}
 
-	gameEnded = true
-	winner = "todo"
-
-	return
+	return nil
 }

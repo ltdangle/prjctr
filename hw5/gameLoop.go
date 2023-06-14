@@ -23,7 +23,6 @@ func NewGameLoop(g *game) *gameLoop {
 func (l *gameLoop) run() {
 	l.choosePlayer1Side()
 	l.makeMoves()
-	l.clearScreen()
 	l.drawGrid()
 	fmt.Println("Game over!")
 }
@@ -61,6 +60,12 @@ func (l *gameLoop) makeMoves() {
 			error = ""
 		}
 
+		// Check if we have a winner.
+		if winner := l.game.WhoWon(); winner != nil {
+			fmt.Println("The winner is player " + winner.name)
+			break
+		}
+
 		// Pass turn to the other player.
 		if l.currentTurnPlayer == l.player1 {
 			l.currentTurnPlayer = l.player2
@@ -68,6 +73,7 @@ func (l *gameLoop) makeMoves() {
 			l.currentTurnPlayer = l.player1
 		}
 	}
+
 }
 
 func (l *gameLoop) gridHeader() string {
