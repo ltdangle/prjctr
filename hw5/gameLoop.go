@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	// "strconv"
 )
@@ -27,9 +28,15 @@ func (l *gameLoop) run() {
 func (l *gameLoop) makeMoves() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for l.game.hasEmptyCells() {
+		l.clearScreen()
 		l.drawGrid()
-		fmt.Print("Player " + l.nextTurn.name + " choose your cell (row, col): ")
+		fmt.Print("Player " + l.nextTurn.name + " choose your cell (row,col): ")
 		scanner.Scan()
+		row, col, isValid := l.validateCoordInput(scanner.Text())
+		if !isValid {
+			continue
+		}
+		l.game.SetX(row, col)
 		fmt.Println("Player " + l.nextTurn.name + " chose " + scanner.Text())
 	}
 }
@@ -86,4 +93,17 @@ name:
 
 func (l *gameLoop) clearScreen() {
 	fmt.Print("\033[H\033[2J")
+}
+
+func (l *gameLoop) validateCoordInput(s string) (int, int, bool) {
+	r := regexp.MustCompile(`^(\d+),(\d+)$`)
+	matches := r.FindStringSubmatch(s)
+
+	if len(matches) == 3 {
+		val1, _ := strconv.Atoi(matches[1])
+		val2, _ := strconv.Atoi(matches[2])
+		return val1, val2, true
+	}
+
+	return 0, 0, false
 }
