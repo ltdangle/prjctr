@@ -3,11 +3,11 @@ package main
 const COLS = 3
 const ROWS = 3
 
-const CROSS string = "X"
-const ZERO = "O"
+const CROSS = 10
+const ZERO = 100
 
 // Grid definition.
-type cell struct{ value string }
+type cell struct{ value int }
 type row [COLS]cell
 type grid [ROWS]row
 

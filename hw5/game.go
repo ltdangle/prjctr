@@ -51,7 +51,7 @@ func (g *game) validateCoords(row int, col int) error {
 func (g *game) hasEmptyCells() bool {
 	for _, row := range g.grid {
 		for _, cell := range row {
-			if cell.value == "" {
+			if cell.value == 0 {
 				return true
 			}
 		}
@@ -63,5 +63,6 @@ func (g *game) WhoWon() (bool, string) {
 	if g.hasEmptyCells() {
 		return false, ""
 	}
+
 	return true, "draw"
 }
