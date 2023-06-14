@@ -6,4 +6,4 @@ type player struct {
 }
 
 var playerX = player{value: 10, name: "X"}
-var playerY = player{value: 100, name: "X"}
+var playerO = player{value: 100, name: "X"}
