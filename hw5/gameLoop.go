@@ -56,6 +56,7 @@ func (l *gameLoop) makeMoves() {
 		err := l.game.Set(l.currentTurnPlayer, row, col)
 		if err != nil {
 			error = err.Error()
+			continue
 		} else {
 			error = ""
 		}
@@ -101,7 +102,7 @@ func (l *gameLoop) choosePlayer1Side() {
 name:
 	for {
 		l.clearScreen()
-		fmt.Printf("Playing for (%s) or (%s) ? ", playerX.name, playerO.name)
+		fmt.Printf("Player1 (%s) or (%s) ? ", playerX.name, playerO.name)
 		scanner.Scan()
 		switch scanner.Text() {
 		case playerX.name:
