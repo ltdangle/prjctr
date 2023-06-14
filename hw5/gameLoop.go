@@ -17,9 +17,27 @@ func NewGameLoop(g *game) *gameLoop {
 }
 
 func (l *gameLoop) run() {
+	l.choosePlayer1Side()
+	// l.clearScreen()
+	l.drawGrid()
+}
+func (l *gameLoop) drawGrid() {
+	for _, row := range l.game.grid {
+		for _, cell := range row {
+			switch cell.value {
+			case playerX.value:
+				fmt.Print(playerX.name + " |")
+			case playerO.value:
+				fmt.Print(playerO.name + " |")
+			default:
+				fmt.Print("  |")
+			}
+		}
+		fmt.Println()
+	}
+}
+func (l *gameLoop) choosePlayer1Side() {
 	scanner := bufio.NewScanner(os.Stdin)
-
-	// Choose player1 side.
 name:
 	for {
 		l.clearScreen()
@@ -38,7 +56,6 @@ name:
 			continue
 		}
 	}
-	fmt.Println("You are playing for " + l.player1.name)
 }
 
 func (l *gameLoop) clearScreen() {
