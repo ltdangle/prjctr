@@ -10,10 +10,10 @@ import (
 )
 
 type gameLoop struct {
-	game     *game
-	player1  *player
-	player2  *player
-	nextTurn *player
+	game              *game
+	player1           *player
+	player2           *player
+	currentTurnPlayer *player
 }
 
 func NewGameLoop(g *game) *gameLoop {
@@ -23,21 +23,35 @@ func NewGameLoop(g *game) *gameLoop {
 func (l *gameLoop) run() {
 	l.choosePlayer1Side()
 	l.makeMoves()
+	l.clearScreen()
+	l.drawGrid()
+	fmt.Println("Game over!")
 }
 
 func (l *gameLoop) makeMoves() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for l.game.hasEmptyCells() {
 		l.clearScreen()
+
 		l.drawGrid()
-		fmt.Print("Player " + l.nextTurn.name + " choose your cell (row,col): ")
+
+		fmt.Print("Player " + l.currentTurnPlayer.name + " choose your cell (row,col): ")
 		scanner.Scan()
+
+		// Validate coordinate input.
 		row, col, isValid := l.validateCoordInput(scanner.Text())
 		if !isValid {
 			continue
 		}
-		l.game.SetX(row, col)
-		fmt.Println("Player " + l.nextTurn.name + " chose " + scanner.Text())
+
+		l.game.Set(l.currentTurnPlayer, row, col)
+
+		// Pass turn to the other player.
+		if l.currentTurnPlayer == l.player1 {
+			l.currentTurnPlayer = l.player2
+		} else if l.currentTurnPlayer == l.player2 {
+			l.currentTurnPlayer = l.player1
+		}
 	}
 }
 
@@ -88,7 +102,7 @@ name:
 			continue
 		}
 	}
-	l.nextTurn = l.player1
+	l.currentTurnPlayer = l.player1
 }
 
 func (l *gameLoop) clearScreen() {

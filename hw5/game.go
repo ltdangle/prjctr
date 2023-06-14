@@ -10,7 +10,7 @@ func NewGame() *game {
 }
 
 // Game methods.
-func (g *game) SetX(row int, col int) error {
+func (g *game) Set(player *player, row int, col int) error {
 	if err := g.validateCoords(row, col); err != nil {
 		return err
 	}
@@ -18,19 +18,7 @@ func (g *game) SetX(row int, col int) error {
 	if !g.hasEmptyCells() {
 		return errors.New("No more empty cells. The game is finished.")
 	}
-	g.grid[row][col].value = playerX.value
-	return nil
-}
-
-func (g *game) SetO(row int, col int) error {
-	if err := g.validateCoords(row, col); err != nil {
-		return err
-	}
-
-	if !g.hasEmptyCells() {
-		return errors.New("No more empty cells. The game is finished.")
-	}
-	g.grid[row][col].value = playerO.value
+	g.grid[row][col].value = player.value
 	return nil
 }
 
