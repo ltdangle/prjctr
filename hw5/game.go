@@ -18,7 +18,7 @@ func (g *game) SetX(row int, col int) error {
 	if !g.hasEmptyCells() {
 		return errors.New("No more empty cells. The game is finished.")
 	}
-	g.grid[row][col].value = CROSS
+	g.grid[row][col].value = playerX.value
 	return nil
 }
 
@@ -30,7 +30,7 @@ func (g *game) SetO(row int, col int) error {
 	if !g.hasEmptyCells() {
 		return errors.New("No more empty cells. The game is finished.")
 	}
-	g.grid[row][col].value = ZERO
+	g.grid[row][col].value = playerO.value
 	return nil
 }
 
@@ -59,10 +59,13 @@ func (g *game) hasEmptyCells() bool {
 	return false
 }
 
-func (g *game) WhoWon() (bool, string) {
+func (g *game) WhoWon() (gameEnded bool, winner string) {
 	if g.hasEmptyCells() {
-		return false, ""
+		return
 	}
 
-	return true, "draw"
+	gameEnded = true
+	winner = "todo"
+
+	return
 }
