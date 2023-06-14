@@ -7,7 +7,9 @@ import (
 )
 
 type gameLoop struct {
-	game *game
+	game    *game
+	player1 *player
+	player2 *player
 }
 
 func NewGameLoop(g *game) *gameLoop {
@@ -16,10 +18,27 @@ func NewGameLoop(g *game) *gameLoop {
 
 func (l *gameLoop) run() {
 	scanner := bufio.NewScanner(os.Stdin)
-	l.clearScreen()
-	fmt.Println("Playing for (x) or (o) ?")
-	scanner.Scan()
-	fmt.Println("You are playing for " + scanner.Text())
+
+	// Choose player1 side.
+name:
+	for {
+		l.clearScreen()
+		fmt.Printf("Playing for (%s) or (%s) ? ", playerX.name, playerO.name)
+		scanner.Scan()
+		switch scanner.Text() {
+		case playerX.name:
+			l.player1 = playerX
+			l.player2 = playerO
+			break name
+		case playerO.name:
+			l.player1 = playerO
+			l.player2 = playerX
+			break name
+		default:
+			continue
+		}
+	}
+	fmt.Println("You are playing for " + l.player1.name)
 }
 
 func (l *gameLoop) clearScreen() {
