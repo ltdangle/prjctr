@@ -112,7 +112,6 @@ func (g *game) WhoWon() *player {
 		diag2Sum += g.grid[r][c].value
 		c++
 	}
-	fmt.Printf("\ndiag2Sum: %d\n", diag2Sum)
 	if diag2Sum == playerX.winningSumCols {
 		return playerX
 	}
