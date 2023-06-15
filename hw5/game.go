@@ -89,7 +89,7 @@ func (g *game) WhoWon() *player {
 		colSum = 0
 	}
 
-	// Calculate win over first horizontal (top - bottom).
+	// Calculate win over first horizontal (left - right).
 	var diag1Sum int
 	rows = len(g.grid)
 	cols = len(g.grid[0])
@@ -100,6 +100,23 @@ func (g *game) WhoWon() *player {
 		return playerX
 	}
 	if diag1Sum == playerO.winningSumCols {
+		return playerO
+	}
+
+	// Calculate win over second horizontal (right - left).
+	var diag2Sum int
+	rows = len(g.grid)
+	cols = len(g.grid[0])
+	c := 0
+	for r := cols - 1; r >= 0; r-- {
+		diag2Sum += g.grid[r][c].value
+		c++
+	}
+	fmt.Printf("\ndiag2Sum: %d\n", diag2Sum)
+	if diag2Sum == playerX.winningSumCols {
+		return playerX
+	}
+	if diag2Sum == playerO.winningSumCols {
 		return playerO
 	}
 
