@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 )
 
 type game struct{ grid *grid }
@@ -71,7 +72,7 @@ func (g *game) WhoWon() *player {
 		rowSum = 0
 	}
 
-	// Calculate over columns.
+	// Calculate win over columns.
 	var colSum int
 	rows := len(g.grid)
 	cols := len(g.grid[0])
@@ -86,6 +87,20 @@ func (g *game) WhoWon() *player {
 			return playerO
 		}
 		colSum = 0
+	}
+
+	// Calculate win over first horizontal (top - bottom).
+	var diag1Sum int
+	rows = len(g.grid)
+	cols = len(g.grid[0])
+	for c := 0; c < cols; c++ {
+		diag1Sum += g.grid[c][c].value
+	}
+	if diag1Sum == playerX.winningSumCols {
+		return playerX
+	}
+	if diag1Sum == playerO.winningSumCols {
+		return playerO
 	}
 
 	return nil
