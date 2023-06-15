@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 )
 
 type game struct{ grid *grid }
@@ -38,7 +37,7 @@ func (g *game) validateCoords(row int, col int) error {
 	}
 
 	// Coordinateds must not be out of bounds.
-	if row > ROWS-1 || col > COLS-1 {
+	if row > ROWS-1 || col > ROWS-1 {
 		return errors.New("Coordinates cannot be out of bounds.")
 	}
 
@@ -63,10 +62,10 @@ func (g *game) WhoWon() *player {
 		for _, cell := range row {
 			rowSum += cell.value
 		}
-		if rowSum == playerX.winningSumRows {
+		if rowSum == playerX.winningSumCols {
 			return playerX
 		}
-		if rowSum == playerO.winningSumRows {
+		if rowSum == playerO.winningSumCols {
 			return playerO
 		}
 		rowSum = 0
