@@ -37,7 +37,7 @@ func (g *game) validateCoords(row int, col int) error {
 	}
 
 	// Coordinateds must not be out of bounds.
-	if row > ROWS-1 || col > ROWS-1 {
+	if row > EDGE-1 || col > EDGE-1 {
 		return errors.New("Coordinates cannot be out of bounds.")
 	}
 

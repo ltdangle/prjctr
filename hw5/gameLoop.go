@@ -127,7 +127,7 @@ name:
 }
 
 func (l *gameLoop) clearScreen() {
-	// fmt.Print("\033[H\033[2J")
+	fmt.Print("\033[H\033[2J")
 }
 
 func (l *gameLoop) validateCoordInput(s string) (int, int, bool) {
