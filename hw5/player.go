@@ -5,6 +5,3 @@ type player struct {
 	name           string
 	winningSumCols int
 }
-
-var playerX *player
-var playerO *player
