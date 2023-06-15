@@ -56,7 +56,7 @@ func (g *game) hasEmptyCells() bool {
 }
 
 func (g *game) WhoWon() *player {
-	// Calculate rows.
+	// Calculate win over rows.
 	var rowSum int
 	for _, row := range g.grid {
 		for _, cell := range row {
@@ -69,6 +69,23 @@ func (g *game) WhoWon() *player {
 			return playerO
 		}
 		rowSum = 0
+	}
+
+	// Calculate over columns.
+	var colSum int
+	rows := len(g.grid)
+	cols := len(g.grid[0])
+	for c := 0; c < cols; c++ {
+		for r := 0; r < rows; r++ {
+			colSum += g.grid[r][c].value
+		}
+		if colSum == playerX.winningSumCols {
+			return playerX
+		}
+		if colSum == playerO.winningSumCols {
+			return playerO
+		}
+		colSum = 0
 	}
 
 	return nil
