@@ -4,6 +4,6 @@ package main
 // Навчити кавоварку варити на арабіці і на бленді (інтерфейс кави і дви стратегії)
 func main() {
 	machine := &HomeCoffeMachine{}
-	machine.Prepare(&Arabica{})
-	machine.Prepare(&Robusta{})
+	machine.Prepare(&arabica{})
+	machine.Prepare(&robusta{})
 }
