@@ -59,23 +59,23 @@ func (r *Rating) Run() {
 	r.course = scanner.Text()
 
 	// Read grades in a loop.
-loop:
 	for {
 		fmt.Print("Add grade (\"-1\" to finish): ")
 		scanner.Scan()
 		gradeStr := scanner.Text()
 
-		switch gradeStr {
-		case "-1":
-			break loop
-		default:
-			err := r.AddGradeFromString(gradeStr)
-			if err != nil {
-				fmt.Println(err)
-				continue
-			}
-			r.CalculateGradeAverage()
+		if gradeStr == "-1" {
+			break
+		}
+
+		err := r.AddGradeFromString(gradeStr)
+		if err != nil {
+			fmt.Println(err)
+			continue
 		}
 	}
+
+	r.CalculateGradeAverage()
+
 	fmt.Printf("\nGrade average is %.2f\n", r.gradeAvg)
 }
