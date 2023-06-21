@@ -1,21 +1,27 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
-func foo(c chan int, someValue int) {
-	c <- someValue
-}
 func main() {
-	fooVal := make(chan int)
+	var wg sync.WaitGroup
 
-	go foo(fooVal, 1)
-	go foo(fooVal, 2)
-	go foo(fooVal, 3)
+	myChan := make(chan int)
 
-	v1 := <-fooVal
-	v2 := <-fooVal
-	v3 := <-fooVal
+	go func() {
+		defer wg.Done()
+		v1 := <-myChan
+		v2 := <-myChan
+		v3 := <-myChan
 
-	fmt.Println(v1, v2, v3)
+		fmt.Println(v1, v2, v3)
+	}()
 
+	myChan <- 1
+	myChan <- 2
+	myChan <- 3
+
+	wg.Wait()
 }
