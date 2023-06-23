@@ -13,21 +13,21 @@ func main() {
 	pipe3 := make(chan string)
 
 	ticker := time.NewTicker(3 * time.Second)
-	pipe3Go := func(pipe chan<- string) {
+	tickerGo := func(pipe chan<- string) {
 		for t := range ticker.C {
 			pipe <- fmt.Sprintf("Tick at %v", t)
 		}
 	}
 
-	pipe2Go := func() {
+	pipe1Go := func(readPipe <-chan string, writePipe chan<- string) {
 		counter := 0
-		for text := range pipe1 {
-			pipe2 <- text + fmt.Sprintf(" p1:%d", counter)
+		for text := range readPipe {
+			writePipe <- text + fmt.Sprintf(" p1:%d", counter)
 			counter++
 		}
 	}
 
-	pipe1Go := func() {
+	pipe2Go := func(readPipe <-chan string, writePipe chan<- string) {
 		counter := 0
 		for text := range pipe2 {
 			pipe3 <- text + fmt.Sprintf(" p2:%d", counter)
@@ -41,9 +41,9 @@ func main() {
 		}
 	}
 
-	go pipe3Go(pipe2)
-	go pipe2Go()
-	go pipe1Go()
+	go pipe1Go(pipe1, pipe2)
+	go pipe2Go(pipe2, pipe3)
+	go tickerGo(pipe1)
 	go printerGo()
 
 	scanner := bufio.NewScanner(os.Stdin)
