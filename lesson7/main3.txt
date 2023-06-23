@@ -13,7 +13,7 @@ func addSuffix(c chan string, suffix string) {
 }
 
 func main() {
-	ch := make(chan string, 1) // Buffered channel
+	ch := make(chan string) // Buffered channel
 
 	// send data to channel
 	ch <- "value1"
