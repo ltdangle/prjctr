@@ -1,2 +1,2 @@
 1. For unbuffered channels there always has to be a goroutine that reads the channel values invoked prior to channel write.
-2. Send operation in its own goroutine, so it doesn't block the main goroutine.
+In other words: It's okay to send to an unbuffered channel from the main goroutine, but you need to ensure that there is another goroutine ready to receive the data, or else it will cause a deadlock.
