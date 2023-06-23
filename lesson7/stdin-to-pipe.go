@@ -4,17 +4,16 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 )
 
 func main() {
 	pipe1 := make(chan string)
 	pipe2 := make(chan string)
+	pipe3 := make(chan string)
 	go func() {
 		counter := 0
 		for text := range pipe1 {
-			// fmt.Printf("Pipe1 %d: %s\n", counter, text)
-			pipe2 <- text + strconv.Itoa(counter)
+			pipe2 <- text + fmt.Sprintf(" p1:%d", counter)
 			counter++
 		}
 	}()
@@ -22,10 +21,17 @@ func main() {
 	go func() {
 		counter := 0
 		for text := range pipe2 {
-			fmt.Printf("Pipe2 %d: %s\n", counter, text)
+			pipe3 <- text + fmt.Sprintf(" p2:%d", counter)
 			counter++
 		}
 	}()
+
+	go func() {
+		for text := range pipe3 {
+			fmt.Println(text)
+		}
+	}()
+
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		pipe1 <- scanner.Text()
