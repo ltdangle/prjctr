@@ -4,12 +4,21 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
 )
 
 func main() {
 	pipe1 := make(chan string)
 	pipe2 := make(chan string)
 	pipe3 := make(chan string)
+
+	ticker := time.NewTicker(3 * time.Second)
+	go func() {
+		for t := range ticker.C {
+			pipe1 <- fmt.Sprintf("Tick at %v", t)
+		}
+	}()
+
 	go func() {
 		counter := 0
 		for text := range pipe1 {
