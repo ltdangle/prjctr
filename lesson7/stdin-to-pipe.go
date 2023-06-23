@@ -36,4 +36,8 @@ func main() {
 	for scanner.Scan() {
 		pipe1 <- scanner.Text()
 	}
+
+	close(pipe1)
+	close(pipe2)
+	close(pipe3)
 }
