@@ -13,9 +13,9 @@ func main() {
 	pipe3 := make(chan string)
 
 	ticker := time.NewTicker(3 * time.Second)
-	pipe3Go := func() {
+	pipe3Go := func(pipe chan<- string) {
 		for t := range ticker.C {
-			pipe2 <- fmt.Sprintf("Tick at %v", t)
+			pipe <- fmt.Sprintf("Tick at %v", t)
 		}
 	}
 
@@ -41,7 +41,7 @@ func main() {
 		}
 	}
 
-	go pipe3Go()
+	go pipe3Go(pipe2)
 	go pipe2Go()
 	go pipe1Go()
 	go printerGo()
