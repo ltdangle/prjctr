@@ -10,22 +10,30 @@ type PackageI interface {
 	RecepientAddress() string
 }
 
-// Box implementation of PackageI
-type Box struct {
+// box implementation of PackageI
+type box struct {
 }
 
-func (b *Box) PackageType() string {
+func NewBox() *box {
+	return &box{}
+}
+
+func (b *box) PackageType() string {
 	return BoxPackageType
 }
-func (b *Box) SenderAddress() string {
+func (b *box) SenderAddress() string {
 	return "sender address"
 }
-func (b *Box) RecepientAddress() string {
+func (b *box) RecepientAddress() string {
 	return "recepient address"
 }
 
 // Envelope implementation of PackageI
 type Envelope struct {
+}
+
+func NewEnvelope() *Envelope {
+	return &Envelope{}
 }
 
 func (e *Envelope) PackageType() string {

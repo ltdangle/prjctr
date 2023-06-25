@@ -21,8 +21,8 @@ func main() {
 	office.AddSender(post.EnvelopePackageType, envelopeSender)
 
 	// Create packages.
-	box := &post.Box{}
-	envelope := &post.Envelope{}
+	box := post.NewBox()
+	envelope := post.NewEnvelope()
 
 	// Send packages.
 	office.Send(box)
