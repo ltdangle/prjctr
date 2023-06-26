@@ -1,14 +1,18 @@
 package transport
 
-type Route struct {
+type route struct {
 	transport []TransportI
 }
 
-func (r *Route) AddTransport(t TransportI) {
+func NewRoute() *route {
+	return &route{}
+}
+
+func (r *route) AddTransport(t TransportI) {
 	r.transport = append(r.transport, t)
 }
 
-func (r *Route) ShowTransport() string {
+func (r *route) ShowTransport() string {
 	var str string
 	for _, t := range r.transport {
 		str += t.Name() + "\n"

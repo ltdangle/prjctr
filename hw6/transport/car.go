@@ -2,6 +2,10 @@ package transport
 
 type Car struct{}
 
+func NewCar() *Car {
+	return &Car{}
+}
+
 func (c *Car) Name() string {
 	return "Car"
 }
