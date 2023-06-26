@@ -1,27 +1,30 @@
 package transport
 
-type Plane struct{}
+type plane struct{}
 
-func (p *Plane) Name() string {
+func (p *plane) Name() string {
 	return "Plane"
 }
 
-func (p *Plane) Move() {
+func (p *plane) Move() {
 	println("Plane is moving")
 }
 
-func (p *Plane) Stop() {
+func (p *plane) Stop() {
 	println("Plane stopped")
 }
 
-func (p *Plane) ChangeSpeed() {
+func (p *plane) ChangeSpeed() {
 	println("Plane changed speed")
 }
 
-func (p *Plane) TakePassengers() {
+func (p *plane) TakePassengers() {
 	println("Plane took passengers")
 }
 
-func (p *Plane) DropPassengers() {
+func (p *plane) DropPassengers() {
 	println("Plane dropped passengers")
+}
+func NewPlane() *plane {
+	return &plane{}
 }
