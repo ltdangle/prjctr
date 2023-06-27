@@ -6,27 +6,13 @@ import (
 	"sync"
 )
 
-// Gorutine to calculate order subtotal.
-// func OrderTotalCalculator(ctx context.Context, orders chan order, wg *sync.WaitGroup) {
-// 	defer wg.Done()
-//
-// 	counter := 1
-// 	for ordr := range orders {
-// 		orderTotal := calculateOrderTotal(ordr)
-// 		productsCount := len(ordr.products)
-// 		fmt.Printf("\nNew order #%d from '%s'. Products %d, total: $%d", counter, ordr.customer, productsCount, orderTotal)
-// 		counter++
-// 	}
-//
-// 	fmt.Println()
-// }
-
 func OrderTotalCalculator(ctx context.Context, orders chan order, wg *sync.WaitGroup) {
+	defer wg.Done()
 	counter := 1
 	for {
 		select {
 		case <-ctx.Done():
-			fmt.Println("Order calculator cancelled.")
+			fmt.Printf("\nOrder calculator cancelled.\n")
 			return
 		case ordr, ok := <-orders:
 			if !ok {

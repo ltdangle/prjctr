@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"math/rand"
 	"strconv"
 	"sync"
@@ -21,18 +20,23 @@ type order struct {
 func main() {
 	orders := make(chan order)
 	var wg sync.WaitGroup
-	ctx, _ := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(context.Background())
 
+	wg.Add(1)
 	go OrderTotalCalculator(ctx, orders, &wg)
 
 	for i := 0; i <= 4; i++ {
 		orders <- randomOrder()
 		time.Sleep(1 * time.Second)
+		if i == 2 {
+			cancel()
+			break
+		}
 	}
+	wg.Wait()
+
 	close(orders)
 
-	wg.Wait()
-	fmt.Println()
 }
 
 // Generates random order.
