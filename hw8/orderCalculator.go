@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-func OrderTotalCalculator(ctx context.Context, orders chan order, wg *sync.WaitGroup) {
+func OrderTotalCalculator(ctx context.Context, orders chan *Order, wg *sync.WaitGroup) {
 	defer wg.Done()
 	counter := 1
 	for {
@@ -18,14 +18,15 @@ func OrderTotalCalculator(ctx context.Context, orders chan order, wg *sync.WaitG
 			if !ok {
 				return
 			}
-			fmt.Printf("\nNew order #%d from '%s'. Products %d, total: $%d", counter, ordr.customer, len(ordr.products), calculateOrderTotal(ordr))
+			ordr.Total = calculateOrderTotal(ordr)
+			fmt.Printf("\nNew order #%d from '%s'. Products %d, total: $%d", counter, ordr.Customer, len(ordr.products), ordr.Total)
 			counter++
 		}
 	}
 }
 
 // Calculates order total.
-func calculateOrderTotal(order order) int {
+func calculateOrderTotal(order *Order) int {
 	var total int
 	for _, product := range order.products {
 		total += product.price
