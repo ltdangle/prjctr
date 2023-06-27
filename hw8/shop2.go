@@ -17,20 +17,24 @@ func main() {
 	var wg sync.WaitGroup
 
 	wg.Add(1)
-	func() {
+	go func() {
 		defer wg.Done()
-		for i := 0; i <= 10; i++ {
+		for i := 0; i <= 4; i++ {
 			orders <- order{product: fmt.Sprintf("product %d", rand.Intn(100))}
 			time.Sleep(1 * time.Second)
 		}
+		close(orders)
 	}()
 
 	wg.Add(1)
-	func() {
+	go func() {
 		defer wg.Done()
+		counter := 1
 		for ordr := range orders {
-			fmt.Printf("\nNew order: %s", ordr.product)
+			fmt.Printf("\nNew order %d: %s", counter, ordr.product)
+			counter++
 		}
+		fmt.Println()
 	}()
 
 	wg.Wait()
