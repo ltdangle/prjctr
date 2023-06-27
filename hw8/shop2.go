@@ -22,33 +22,38 @@ func main() {
 	var wg sync.WaitGroup
 
 	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		for i := 0; i <= 4; i++ {
-			orders <- generateOrder()
-			time.Sleep(1 * time.Second)
-		}
-		close(orders)
-	}()
-
+	go OrderGenerator(orders, &wg)
 	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		counter := 1
-		for ordr := range orders {
-			orderTotal := calculateOrderTotal(ordr)
-			productsCount := len(ordr.products)
-			fmt.Printf("\nNew order #%d from '%s'. Products %d, total: $%d", counter, ordr.customer, productsCount, orderTotal)
-			counter++
-		}
-		fmt.Println()
-	}()
+	go OrderTotalCalculator(orders, &wg)
 
 	wg.Wait()
 }
 
+// Generates orders.
+func OrderGenerator(orders chan order, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for i := 0; i <= 4; i++ {
+		orders <- randomOrder()
+		time.Sleep(1 * time.Second)
+	}
+	close(orders)
+}
+
+// Calculates order subtotal.
+func OrderTotalCalculator(orders chan order, wg *sync.WaitGroup) {
+	defer wg.Done()
+	counter := 1
+	for ordr := range orders {
+		orderTotal := calculateOrderTotal(ordr)
+		productsCount := len(ordr.products)
+		fmt.Printf("\nNew order #%d from '%s'. Products %d, total: $%d", counter, ordr.customer, productsCount, orderTotal)
+		counter++
+	}
+	fmt.Println()
+}
+
 // Generates random order.
-func generateOrder() order {
+func randomOrder() order {
 	// Generate products.
 	var products []product
 	for i := 0; i < rand.Intn(5); i++ {
