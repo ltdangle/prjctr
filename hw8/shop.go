@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
 	"strconv"
 	"sync"
@@ -31,6 +32,7 @@ func main() {
 	close(orders)
 
 	wg.Wait()
+	fmt.Println()
 }
 
 // Generates random order.
