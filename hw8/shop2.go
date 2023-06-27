@@ -3,13 +3,18 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"sync"
 	"time"
 )
 
+type product struct {
+	name  string
+	price int
+}
 type order struct {
-	product string
-	price   int
+	customer string
+	products []product
 }
 
 func main() {
@@ -20,7 +25,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 		for i := 0; i <= 4; i++ {
-			orders <- order{product: fmt.Sprintf("product %d", rand.Intn(100))}
+			orders <- generateOrder()
 			time.Sleep(1 * time.Second)
 		}
 		close(orders)
@@ -31,11 +36,35 @@ func main() {
 		defer wg.Done()
 		counter := 1
 		for ordr := range orders {
-			fmt.Printf("\nNew order %d: %s", counter, ordr.product)
+			orderTotal := calculateOrderTotal(ordr)
+			productsCount := len(ordr.products)
+			fmt.Printf("\nNew order #%d from '%s'. Products %d, total: $%d", counter, ordr.customer, productsCount, orderTotal)
 			counter++
 		}
 		fmt.Println()
 	}()
 
 	wg.Wait()
+}
+
+// Generates random order.
+func generateOrder() order {
+	// Generate products.
+	var products []product
+	for i := 0; i < rand.Intn(5); i++ {
+		products = append(products, product{name: "product " + strconv.Itoa(rand.Intn(100)), price: rand.Intn(100)})
+	}
+	return order{
+		customer: "Customer " + strconv.Itoa(rand.Intn(100)),
+		products: products,
+	}
+}
+
+// Calculates order total.
+func calculateOrderTotal(order order) int {
+	var total int
+	for _, product := range order.products {
+		total += product.price
+	}
+	return total
 }
