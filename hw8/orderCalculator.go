@@ -5,13 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"sync"
 	"time"
 )
 
 // OrderTotalCalculator gorutine
-func OrderTotalCalculator(ctx context.Context, order *Order, wg *sync.WaitGroup) error {
-	defer wg.Done()
+func OrderTotalCalculator(ctx context.Context, order *Order) error {
 	ticker := time.NewTicker(1 * time.Second)
 	counter := 1
 	for {

@@ -5,12 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"sync"
 	"time"
 )
 
-func ProductFinder(ctx context.Context, order *Order, wg *sync.WaitGroup) error {
-	defer wg.Done()
+func ProductFinder(ctx context.Context, order *Order) error {
 	ticker := time.NewTicker(1 * time.Second) // check payments every 2 seconds
 	defer ticker.Stop()
 	counter := 1

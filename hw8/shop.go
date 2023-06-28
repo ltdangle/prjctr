@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
 	"strconv"
 	"sync"
@@ -27,17 +28,38 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(jobsTimeout)*time.Second)
 	defer cancel()
 
+	// Channel for errors from the worker goroutines.
+	errc := make(chan error)
+
 	order := randomOrder()
 
 	wg.Add(1)
-	go ProductFinder(ctx, order, &wg)
+	go func() {
+		defer wg.Done()
+		errc <- ProductFinder(ctx, order)
+	}()
+
 	wg.Add(1)
-	go OrderTotalCalculator(ctx, order, &wg)
+	go func() {
+		defer wg.Done()
+		errc <- OrderTotalCalculator(ctx, order)
+	}()
+
+	// Wait for any of the goroutines to return an error. If one does,
+	// cancel the context to stop the others.
+	select {
+	case err := <-errc:
+		if err != nil {
+			fmt.Printf("\nOrder processing canceled: %s \n", err)
+			cancel()
+			return
+		}
+	case <-ctx.Done():
+		fmt.Printf("\nOrder processing timed out.\n")
+		return
+	}
 
 	wg.Wait()
-
-	// jsonOrderQue, _ := json.MarshalIndent(order, "", " ")
-	// fmt.Println(string(jsonOrderQue))
 }
 
 // Generates random order.
