@@ -2,26 +2,29 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"math/rand"
 	"sync"
+	"time"
 )
 
 // OrderTotalCalculator gorutine
-func OrderTotalCalculator(ctx context.Context, orders chan *Order, wg *sync.WaitGroup) {
+func OrderTotalCalculator(ctx context.Context, order *Order, wg *sync.WaitGroup) error {
 	defer wg.Done()
-	counter := 1
+	ticker := time.NewTicker(1 * time.Second)
+
 	for {
 		select {
 		case <-ctx.Done():
 			fmt.Printf("\nOrder calculator cancelled.\n")
-			return
-		case ordr, ok := <-orders:
-			if !ok {
-				return
+			return ctx.Err()
+		case <-ticker.C:
+			fmt.Printf("\nOrder calculator is finding product %s", time.Now())
+			if rand.Intn(10) == 0 {
+				fmt.Printf("\nOrder calculator error\n")
+				return errors.New("Order calculator error")
 			}
-			ordr.Total = calculateOrderTotal(ordr)
-			fmt.Printf("\nNew order #%d from '%s'. Products %d, total: $%d", counter, ordr.Customer, len(ordr.products), ordr.Total)
-			counter++
 		}
 	}
 }

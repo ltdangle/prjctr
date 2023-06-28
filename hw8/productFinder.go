@@ -2,24 +2,28 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"math/rand"
 	"sync"
+	"time"
 )
 
-func ProductFinder(ctx context.Context, orders chan *Order, wg *sync.WaitGroup) {
+func ProductFinder(ctx context.Context, order *Order, wg *sync.WaitGroup) error {
 	defer wg.Done()
-	counter := 1
+	ticker := time.NewTicker(1 * time.Second) // check payments every 2 seconds
+	defer ticker.Stop()
 	for {
 		select {
 		case <-ctx.Done():
 			fmt.Printf("\nProduct finder cancelled.\n")
-			return
-		case _, ok := <-orders:
-			if !ok {
-				return
+			return ctx.Err()
+		case <-ticker.C:
+			fmt.Printf("\nProductFinder is finding product %s", time.Now())
+			if rand.Intn(10) == 0 {
+				fmt.Printf("\nProductFinder error\n")
+				return errors.New("ProductFinder error")
 			}
-			fmt.Printf("Product has been found!")
-			counter++
 		}
 	}
 }

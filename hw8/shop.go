@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"strconv"
 	"sync"
-	"time"
 )
 
 type Product struct {
@@ -19,24 +18,19 @@ type Order struct {
 }
 
 func main() {
-	orders := make(chan *Order)
 	var wg sync.WaitGroup
-	ctx, cancel := context.WithCancel(context.Background())
-
-	wg.Add(1)
-	go ProductFinder(ctx, orders, &wg)
-	wg.Add(1)
-	go OrderTotalCalculator(ctx, orders, &wg)
+	ctx, _ := context.WithCancel(context.Background())
 
 	order := randomOrder()
-	orders <- order
 
-	time.Sleep(2 * time.Second)
-	cancel()
+	wg.Add(1)
+	go ProductFinder(ctx, order, &wg)
+	wg.Add(1)
+	go OrderTotalCalculator(ctx, order, &wg)
+
+	// cancel()
 
 	wg.Wait()
-
-	close(orders)
 
 	// jsonOrderQue, _ := json.MarshalIndent(order, "", " ")
 	// fmt.Println(string(jsonOrderQue))
