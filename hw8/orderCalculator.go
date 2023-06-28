@@ -6,6 +6,7 @@ import (
 	"sync"
 )
 
+// OrderTotalCalculator gorutine
 func OrderTotalCalculator(ctx context.Context, orders chan *Order, wg *sync.WaitGroup) {
 	defer wg.Done()
 	counter := 1

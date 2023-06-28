@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"math/rand"
 	"strconv"
 	"sync"
@@ -26,27 +24,22 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	wg.Add(1)
+	go ProductFinder(ctx, orders, &wg)
+	wg.Add(1)
 	go OrderTotalCalculator(ctx, orders, &wg)
 
-	var orderQue []*Order
-	for i := 0; i <= 4; i++ {
-		rndOrder := randomOrder()
-		orderQue = append(orderQue, rndOrder)
+	order := randomOrder()
+	orders <- order
 
-		orders <- rndOrder
-		time.Sleep(1 * time.Second)
-		if i == 2 {
-			cancel()
-			break
-		}
-	}
+	time.Sleep(2 * time.Second)
+	cancel()
+
 	wg.Wait()
 
 	close(orders)
 
-	// Print order que.
-	jsonOrderQue, _ := json.MarshalIndent(orderQue, "", " ")
-	fmt.Println(string(jsonOrderQue))
+	// jsonOrderQue, _ := json.MarshalIndent(order, "", " ")
+	// fmt.Println(string(jsonOrderQue))
 }
 
 // Generates random order.
