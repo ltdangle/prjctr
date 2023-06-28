@@ -23,6 +23,7 @@ func main() {
 	jobsTimeout := 4
 
 	var wg sync.WaitGroup
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(jobsTimeout)*time.Second)
 	defer cancel()
 
@@ -32,8 +33,6 @@ func main() {
 	go ProductFinder(ctx, order, &wg)
 	wg.Add(1)
 	go OrderTotalCalculator(ctx, order, &wg)
-
-	// cancel()
 
 	wg.Wait()
 
