@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"strconv"
 	"sync"
+	"time"
 )
 
 type Product struct {
@@ -18,8 +19,12 @@ type Order struct {
 }
 
 func main() {
+	// Timeout for all jobs.
+	jobsTimeout := 4
+
 	var wg sync.WaitGroup
-	ctx, _ := context.WithCancel(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(jobsTimeout)*time.Second)
+	defer cancel()
 
 	order := randomOrder()
 
