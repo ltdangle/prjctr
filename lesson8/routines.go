@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sync"
 	"time"
 )
 
@@ -10,7 +11,6 @@ type workerState struct {
 	name string
 	load int
 }
-type workers []*workerState
 
 func main() {
 	// Setup array of worker states.
@@ -20,10 +20,22 @@ func main() {
 		&workerState{name: "worker3"},
 	}
 	// Run workers.
-	go workerRoutine(workerStates[0])
-	go workerRoutine(workerStates[1])
-	go workerRoutine(workerStates[2])
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go workerRoutine(workerStates[0], &wg)
+	wg.Add(1)
+	go workerRoutine(workerStates[1], &wg)
+	wg.Add(1)
+	go workerRoutine(workerStates[2], &wg)
 
+	wg.Add(1)
+	go printStats(workerStates, &wg)
+	wg.Wait()
+}
+
+// Print to screen goroutine.
+func printStats(workerStates []*workerState, wg *sync.WaitGroup) {
+	defer wg.Done()
 	ticker := time.NewTicker(100 * time.Millisecond)
 	for t := range ticker.C {
 		// Poll worker states and print statistics.
@@ -37,7 +49,8 @@ func main() {
 }
 
 // Worker goroutine.
-func workerRoutine(s *workerState) {
+func workerRoutine(s *workerState, wg *sync.WaitGroup) {
+	defer wg.Done()
 	ticker := time.NewTicker(10 * time.Millisecond)
 	for _ = range ticker.C {
 		// Set worker load randomly.
