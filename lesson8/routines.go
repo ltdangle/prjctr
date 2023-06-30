@@ -24,14 +24,14 @@ func main() {
 	go workerRoutine(workerStates[1])
 	go workerRoutine(workerStates[2])
 
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(100 * time.Millisecond)
 	for t := range ticker.C {
 		// Poll worker states and print statistics.
 		fmt.Print("\033[H\033[2J")
 		fmt.Println("Tick: ", t)
 		for _, s := range workerStates {
 			fmt.Printf("\nWorker: %s", s.name)
-			fmt.Printf("\nLoad: %d\n", s.load)
+			fmt.Printf("\nLoad: %s\n", prettyLoad(s.load))
 		}
 	}
 }
@@ -41,6 +41,13 @@ func workerRoutine(s *workerState) {
 	ticker := time.NewTicker(10 * time.Millisecond)
 	for _ = range ticker.C {
 		// Set worker load randomly.
-		s.load = rand.Intn(10)
+		s.load = rand.Intn(9)
 	}
+}
+func prettyLoad(l int) string {
+	str := "|"
+	for i := 0; i < l; i++ {
+		str += "|"
+	}
+	return str
 }
