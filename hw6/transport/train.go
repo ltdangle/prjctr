@@ -22,8 +22,9 @@ func (t *train) ChangeSpeed() {
 	println("Train changed speed")
 }
 
-func (t *train) TakePassengers() {
+func (t *train) TakePassengers(*Passenger) error {
 	println("Train took passengers")
+	return nil
 }
 
 func (t *train) DropPassengers() {

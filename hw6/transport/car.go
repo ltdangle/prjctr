@@ -1,9 +1,17 @@
 package transport
 
-type Car struct{}
+import (
+	"errors"
+	"strconv"
+)
 
-func NewCar() *Car {
-	return &Car{}
+type Car struct {
+	maxPassengers int
+	passengers    []*Passenger
+}
+
+func NewCar(maxPassengers int) *Car {
+	return &Car{maxPassengers: maxPassengers}
 }
 
 func (c *Car) Name() string {
@@ -22,8 +30,12 @@ func (c *Car) ChangeSpeed() {
 	println("Car changed speed")
 }
 
-func (c *Car) TakePassengers() {
-	println("Car took passengers")
+func (c *Car) TakePassengers(p *Passenger) error {
+	if len(c.passengers) == c.maxPassengers {
+		return errors.New("Cannot take more than " + strconv.Itoa(c.maxPassengers))
+	}
+	c.passengers = append(c.passengers, p)
+	return nil
 }
 
 func (c *Car) DropPassengers() {

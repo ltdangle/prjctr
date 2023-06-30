@@ -8,7 +8,10 @@ import (
 func main() {
 	route := transport.NewRoute()
 
-	car := transport.NewCar()
+	car := transport.NewCar(4)
+	_ = car.TakePassengers(&transport.Passenger{})
+	_ = car.TakePassengers(&transport.Passenger{})
+
 	train := transport.NewTrain()
 	plane := transport.NewPlane()
 
