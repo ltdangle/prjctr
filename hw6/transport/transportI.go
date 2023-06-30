@@ -1,7 +1,7 @@
 package transport
 
-// TransportI interface.
-type TransportI interface {
+// Transport interface.
+type Transport interface {
 	Name() string
 	Move()
 	Stop()
