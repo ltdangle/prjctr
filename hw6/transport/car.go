@@ -7,7 +7,7 @@ import (
 
 type Car struct {
 	maxPassengers int
-	passengers    []*Passenger
+	passengers    []*passenger
 }
 
 func NewCar(maxPassengers int) *Car {
@@ -30,7 +30,7 @@ func (c *Car) ChangeSpeed() {
 	println("Car changed speed")
 }
 
-func (c *Car) TakePassengers(p *Passenger) error {
+func (c *Car) TakePassengers(p *passenger) error {
 	if len(c.passengers) == c.maxPassengers {
 		return errors.New("Cannot take more than " + strconv.Itoa(c.maxPassengers))
 	}

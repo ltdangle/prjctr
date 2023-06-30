@@ -9,11 +9,14 @@ func main() {
 	route := transport.NewRoute()
 
 	car := transport.NewCar(4)
-	_ = car.TakePassengers(&transport.Passenger{})
-	_ = car.TakePassengers(&transport.Passenger{})
+	_ = car.TakePassengers(transport.NewPassenger())
+	_ = car.TakePassengers(transport.NewPassenger())
 
 	train := transport.NewTrain()
-	plane := transport.NewPlane()
+	
+	planeRegistration := transport.NewRegistration()
+	planeRegistration.AddPassengers(transport.NewPassenger())
+	plane := transport.NewPlane(planeRegistration)
 
 	route.AddTransport(car)
 	route.AddTransport(train)

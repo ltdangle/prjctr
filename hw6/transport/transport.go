@@ -6,6 +6,6 @@ type Transport interface {
 	Move()
 	Stop()
 	ChangeSpeed()
-	TakePassengers(p *Passenger) error
+	TakePassengers(p *passenger) error
 	DropPassengers()
 }

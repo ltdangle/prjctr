@@ -1,3 +1,7 @@
 package transport
 
-type Passenger struct{}
+type passenger struct{}
+
+func NewPassenger() *passenger {
+	return &passenger{}
+}
