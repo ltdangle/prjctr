@@ -12,8 +12,8 @@ func main() {
 	_ = car.TakePassengers(transport.NewPassenger())
 	_ = car.TakePassengers(transport.NewPassenger())
 
-	train := transport.NewTrain()
-	
+	train := transport.NewTrain(200)
+
 	planeRegistration := transport.NewRegistration()
 	planeRegistration.AddPassengers(transport.NewPassenger())
 	plane := transport.NewPlane(planeRegistration)

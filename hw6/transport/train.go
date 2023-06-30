@@ -1,9 +1,17 @@
 package transport
 
-type train struct{}
+import (
+	"errors"
+	"strconv"
+)
 
-func NewTrain() *train {
-	return &train{}
+type train struct {
+	maxSpeed int
+	speed    int
+}
+
+func NewTrain(maxSpeed int) *train {
+	return &train{maxSpeed: maxSpeed}
 }
 
 func (t *train) Name() string {
@@ -18,8 +26,15 @@ func (t *train) Stop() {
 	println("Train stopped")
 }
 
-func (t *train) ChangeSpeed() {
-	println("Train changed speed")
+func (t *train) ChangeSpeed(speedChange int) error {
+	newSpeed := t.speed + speedChange
+
+	if newSpeed > t.maxSpeed {
+		return errors.New("speed is over max: " + strconv.Itoa(t.maxSpeed))
+	}
+
+	t.speed = newSpeed
+	return nil
 }
 
 func (t *train) TakePassengers(*passenger) error {

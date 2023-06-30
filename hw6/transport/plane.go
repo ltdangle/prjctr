@@ -23,8 +23,9 @@ func (p *plane) Stop() {
 	println("Plane stopped")
 }
 
-func (p *plane) ChangeSpeed() {
+func (p *plane) ChangeSpeed(int) error {
 	println("Plane changed speed")
+	return nil
 }
 
 func (pl *plane) TakePassengers(p *passenger) error {

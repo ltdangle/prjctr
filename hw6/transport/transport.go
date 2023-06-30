@@ -5,7 +5,7 @@ type Transport interface {
 	Name() string
 	Move()
 	Stop()
-	ChangeSpeed()
+	ChangeSpeed(speedChange int) error
 	TakePassengers(p *passenger) error
 	DropPassengers()
 }

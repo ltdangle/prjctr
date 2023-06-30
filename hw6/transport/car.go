@@ -26,8 +26,9 @@ func (c *Car) Stop() {
 	println("Car stopped")
 }
 
-func (c *Car) ChangeSpeed() {
+func (c *Car) ChangeSpeed(int) error {
 	println("Car changed speed")
+	return nil
 }
 
 func (c *Car) TakePassengers(p *passenger) error {
