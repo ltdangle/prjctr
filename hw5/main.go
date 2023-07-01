@@ -6,21 +6,20 @@ import (
 	"os"
 )
 
-var playerX *player
-var playerO *player
-var score map[string]int
-
 func main() {
-	// Game sore and players.
-	score = make(map[string]int)
-	playerX = &player{value: 10, name: "X", winningSumCols: Edge * 10}
-	playerO = &player{value: 100, name: "O", winningSumCols: Edge * 100}
+	// Game sore.
+	score := make(map[string]int)
 
 	scanner := bufio.NewScanner(os.Stdin)
 
+	// Outer game loop.
 	for {
-		game := NewGame()
-		loop := NewGameLoop(game)
+		game := NewGame(
+			&player{value: 10, name: "X", winningSumCols: Edge * 10},
+			&player{value: 100, name: "O", winningSumCols: Edge * 100},
+			NewGrid(),
+		)
+		loop := NewGameLoop(game, &score)
 		loop.run()
 
 		// Print score and continue?

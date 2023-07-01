@@ -11,13 +11,17 @@ import (
 
 type gameLoop struct {
 	game              *game
+	score             *map[string]int
 	player1           *player
 	player2           *player
 	currentTurnPlayer *player
 }
 
-func NewGameLoop(g *game) *gameLoop {
-	return &gameLoop{game: g}
+func NewGameLoop(g *game, score *map[string]int) *gameLoop {
+	return &gameLoop{
+		game:  g,
+		score: score,
+	}
 }
 
 func (l *gameLoop) run() {
@@ -38,11 +42,11 @@ func (l *gameLoop) makeMoves() {
 			fmt.Println("The winner is player " + winner.name)
 
 			// Record the score.
-			_, ok := score[winner.name]
+			_, ok := (*l.score)[winner.name]
 			if !ok {
-				score[winner.name] = 1
+				(*l.score)[winner.name] = 1
 			} else {
-				score[winner.name]++
+				(*l.score)[winner.name]++
 			}
 
 			break
@@ -98,10 +102,10 @@ func (l *gameLoop) drawGrid() {
 		fmt.Printf(" %s |", strconv.Itoa(rowIndex))
 		for _, cell := range row {
 			switch cell.value {
-			case playerX.value:
-				fmt.Printf(" %s |", playerX.name)
-			case playerO.value:
-				fmt.Printf(" %s |", playerO.name)
+			case l.game.playerX.value:
+				fmt.Printf(" %s |", l.game.playerX.name)
+			case l.game.playerO.value:
+				fmt.Printf(" %s |", l.game.playerO.name)
 			default:
 				fmt.Printf(" %s |", " ")
 			}
@@ -115,16 +119,16 @@ func (l *gameLoop) choosePlayer1Side() {
 name:
 	for {
 		l.clearScreen()
-		fmt.Printf("Player1 (%s) or (%s) ? ", playerX.name, playerO.name)
+		fmt.Printf("Player1 (%s) or (%s) ? ", l.game.playerX.name, l.game.playerO.name)
 		scanner.Scan()
 		switch scanner.Text() {
-		case playerX.name:
-			l.player1 = playerX
-			l.player2 = playerO
+		case l.game.playerX.name:
+			l.player1 = l.game.playerX
+			l.player2 = l.game.playerO
 			break name
-		case playerO.name:
-			l.player1 = playerO
-			l.player2 = playerX
+		case l.game.playerO.name:
+			l.player1 = l.game.playerO
+			l.player2 = l.game.playerX
 			break name
 		default:
 			continue
