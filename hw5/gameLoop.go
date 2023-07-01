@@ -30,52 +30,21 @@ func (l *gameLoop) run() {
 }
 
 func (l *gameLoop) makeMoves() {
-	var error string
-	scanner := bufio.NewScanner(os.Stdin)
 	for l.game.hasEmptyCells() {
+		// Clear screen.
 		l.clearScreen()
 
+		// Draw game grid.
 		l.drawGrid()
 
-		// Check if we have a winner.
-		if winner := l.game.WhoWon(); winner != nil {
+		// Exit loop if we have a winner.
+		if winner := l.weHaveAWinner(); winner != nil {
 			fmt.Println("The winner is player " + winner.name)
-
-			// Record the score.
-			_, ok := (*l.score)[winner.name]
-			if !ok {
-				(*l.score)[winner.name] = 1
-			} else {
-				(*l.score)[winner.name]++
-			}
-
 			break
 		}
 
-		// Print error, if any.
-		if error != "" {
-			fmt.Println("Error: " + error)
-		}
-
-		fmt.Print("Player " + l.currentTurnPlayer.name + " choose your cell (row,col): ")
-		scanner.Scan()
-
-		// Validate coordinates input.
-		row, col, isValid := l.validateCoordInput(scanner.Text())
-		if !isValid {
-			error = "Incorrect coordinates."
-			continue
-		} else {
-			error = ""
-		}
-
-		err := l.game.Set(l.currentTurnPlayer, row, col)
-		if err != nil {
-			error = err.Error()
-			continue
-		} else {
-			error = ""
-		}
+		// Get user input.
+		l.userInput()
 
 		// Pass turn to the other player.
 		if l.currentTurnPlayer == l.player1 {
@@ -85,6 +54,44 @@ func (l *gameLoop) makeMoves() {
 		}
 	}
 
+}
+
+func (l *gameLoop) userInput() {
+	scanner := bufio.NewScanner(os.Stdin)
+	fmt.Print("Player " + l.currentTurnPlayer.name + " choose your cell (row,col): ")
+	for {
+		scanner.Scan()
+
+		// Validate coordinates input.
+		row, col, isValid := l.validateCoordInput(scanner.Text())
+		if !isValid {
+			fmt.Println("Error: Incorrect coordinates.")
+			continue
+		}
+
+		// Check that coordinates are valid (in bounds).
+		err := l.game.Set(l.currentTurnPlayer, row, col)
+		if err != nil {
+			fmt.Println("Error: " + err.Error())
+			continue
+		}
+		break
+	}
+
+}
+func (l *gameLoop) weHaveAWinner() *player {
+
+	if winner := l.game.WhoWon(); winner != nil {
+		// Record the score.
+		_, ok := (*l.score)[winner.name]
+		if !ok {
+			(*l.score)[winner.name] = 1
+		} else {
+			(*l.score)[winner.name]++
+		}
+		return winner
+	}
+	return nil
 }
 
 func (l *gameLoop) gridHeader() string {
