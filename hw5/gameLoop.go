@@ -11,13 +11,17 @@ import (
 
 type gameLoop struct {
 	game              *game
+	score             *map[string]int
 	player1           *player
 	player2           *player
 	currentTurnPlayer *player
 }
 
-func NewGameLoop(g *game) *gameLoop {
-	return &gameLoop{game: g}
+func NewGameLoop(g *game, score *map[string]int) *gameLoop {
+	return &gameLoop{
+		game:  g,
+		score: score,
+	}
 }
 
 func (l *gameLoop) run() {
@@ -26,52 +30,21 @@ func (l *gameLoop) run() {
 }
 
 func (l *gameLoop) makeMoves() {
-	var error string
-	scanner := bufio.NewScanner(os.Stdin)
 	for l.game.hasEmptyCells() {
+		// Clear screen.
 		l.clearScreen()
 
+		// Draw game grid.
 		l.drawGrid()
 
-		// Check if we have a winner.
-		if winner := l.game.WhoWon(); winner != nil {
+		// Exit loop if we have a winner.
+		if winner := l.weHaveAWinner(); winner != nil {
 			fmt.Println("The winner is player " + winner.name)
-
-			// Record the score.
-			_, ok := score[winner.name]
-			if !ok {
-				score[winner.name] = 1
-			} else {
-				score[winner.name]++
-			}
-
 			break
 		}
 
-		// Print error, if any.
-		if error != "" {
-			fmt.Println("Error: " + error)
-		}
-
-		fmt.Print("Player " + l.currentTurnPlayer.name + " choose your cell (row,col): ")
-		scanner.Scan()
-
-		// Validate coordinates input.
-		row, col, isValid := l.validateCoordInput(scanner.Text())
-		if !isValid {
-			error = "Incorrect coordinates."
-			continue
-		} else {
-			error = ""
-		}
-
-		err := l.game.Set(l.currentTurnPlayer, row, col)
-		if err != nil {
-			error = err.Error()
-			continue
-		} else {
-			error = ""
-		}
+		// Get user input.
+		l.userInput()
 
 		// Pass turn to the other player.
 		if l.currentTurnPlayer == l.player1 {
@@ -81,6 +54,44 @@ func (l *gameLoop) makeMoves() {
 		}
 	}
 
+}
+
+func (l *gameLoop) userInput() {
+	scanner := bufio.NewScanner(os.Stdin)
+	fmt.Print("Player " + l.currentTurnPlayer.name + " choose your cell (row,col): ")
+	for {
+		scanner.Scan()
+
+		// Validate coordinates input.
+		row, col, isValid := l.validateCoordInput(scanner.Text())
+		if !isValid {
+			fmt.Println("Error: Incorrect coordinates.")
+			continue
+		}
+
+		// Check that coordinates are valid (in bounds).
+		err := l.game.Set(l.currentTurnPlayer, row, col)
+		if err != nil {
+			fmt.Println("Error: " + err.Error())
+			continue
+		}
+		break
+	}
+
+}
+func (l *gameLoop) weHaveAWinner() *player {
+
+	if winner := l.game.WhoWon(); winner != nil {
+		// Record the score.
+		_, ok := (*l.score)[winner.name]
+		if !ok {
+			(*l.score)[winner.name] = 1
+		} else {
+			(*l.score)[winner.name]++
+		}
+		return winner
+	}
+	return nil
 }
 
 func (l *gameLoop) gridHeader() string {
@@ -98,10 +109,10 @@ func (l *gameLoop) drawGrid() {
 		fmt.Printf(" %s |", strconv.Itoa(rowIndex))
 		for _, cell := range row {
 			switch cell.value {
-			case playerX.value:
-				fmt.Printf(" %s |", playerX.name)
-			case playerO.value:
-				fmt.Printf(" %s |", playerO.name)
+			case l.game.playerX.value:
+				fmt.Printf(" %s |", l.game.playerX.name)
+			case l.game.playerO.value:
+				fmt.Printf(" %s |", l.game.playerO.name)
 			default:
 				fmt.Printf(" %s |", " ")
 			}
@@ -115,16 +126,16 @@ func (l *gameLoop) choosePlayer1Side() {
 name:
 	for {
 		l.clearScreen()
-		fmt.Printf("Player1 (%s) or (%s) ? ", playerX.name, playerO.name)
+		fmt.Printf("Player1 (%s) or (%s) ? ", l.game.playerX.name, l.game.playerO.name)
 		scanner.Scan()
 		switch scanner.Text() {
-		case playerX.name:
-			l.player1 = playerX
-			l.player2 = playerO
+		case l.game.playerX.name:
+			l.player1 = l.game.playerX
+			l.player2 = l.game.playerO
 			break name
-		case playerO.name:
-			l.player1 = playerO
-			l.player2 = playerX
+		case l.game.playerO.name:
+			l.player1 = l.game.playerO
+			l.player2 = l.game.playerX
 			break name
 		default:
 			continue

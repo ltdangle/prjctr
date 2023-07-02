@@ -4,12 +4,17 @@ import (
 	"errors"
 )
 
-type game struct{ grid *grid }
+type game struct {
+	playerX *player
+	playerO *player
+	grid    *grid
+}
+
+func NewGame(playerX *player, playerO *player, grid *grid) *game {
+	return &game{playerX: playerX, playerO: playerO, grid: grid}
+}
 
 // Game constructor.
-func NewGame() *game {
-	return &game{grid: NewGrid()}
-}
 
 // Game methods.
 func (g *game) Set(player *player, row int, col int) error {
@@ -62,11 +67,11 @@ func (g *game) WhoWon() *player {
 		for _, cell := range row {
 			rowSum += cell.value
 		}
-		if rowSum == playerX.winningSumCols {
-			return playerX
+		if rowSum == g.playerX.winningSumCols {
+			return g.playerX
 		}
-		if rowSum == playerO.winningSumCols {
-			return playerO
+		if rowSum == g.playerO.winningSumCols {
+			return g.playerO
 		}
 		rowSum = 0
 	}
@@ -79,11 +84,11 @@ func (g *game) WhoWon() *player {
 		for r := 0; r < rows; r++ {
 			colSum += g.grid[r][c].value
 		}
-		if colSum == playerX.winningSumCols {
-			return playerX
+		if colSum == g.playerX.winningSumCols {
+			return g.playerX
 		}
-		if colSum == playerO.winningSumCols {
-			return playerO
+		if colSum == g.playerO.winningSumCols {
+			return g.playerO
 		}
 		colSum = 0
 	}
@@ -95,11 +100,11 @@ func (g *game) WhoWon() *player {
 	for c := 0; c < cols; c++ {
 		diag1Sum += g.grid[c][c].value
 	}
-	if diag1Sum == playerX.winningSumCols {
-		return playerX
+	if diag1Sum == g.playerX.winningSumCols {
+		return g.playerX
 	}
-	if diag1Sum == playerO.winningSumCols {
-		return playerO
+	if diag1Sum == g.playerO.winningSumCols {
+		return g.playerO
 	}
 
 	// Calculate win over second horizontal (right - left).
@@ -111,11 +116,11 @@ func (g *game) WhoWon() *player {
 		diag2Sum += g.grid[r][c].value
 		c++
 	}
-	if diag2Sum == playerX.winningSumCols {
-		return playerX
+	if diag2Sum == g.playerX.winningSumCols {
+		return g.playerX
 	}
-	if diag2Sum == playerO.winningSumCols {
-		return playerO
+	if diag2Sum == g.playerO.winningSumCols {
+		return g.playerO
 	}
 
 	return nil
