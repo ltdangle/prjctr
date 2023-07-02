@@ -10,12 +10,12 @@ func main() {
 	office := *post.NewSortOffice()
 
 	// Configure senders.
-	boxSender := func(p post.PackageI) {
+	boxSender := func(p post.Package) {
 		fmt.Println("BoxSender is sending " + p.PackageType() + " from " + p.SenderAddress() + " to " + p.RecepientAddress())
 	}
 	office.AddSender(post.BoxPackageType, boxSender)
 
-	envelopeSender := func(p post.PackageI) {
+	envelopeSender := func(p post.Package) {
 		fmt.Println("EnvelopeSender is sending " + p.PackageType() + " from " + p.SenderAddress() + " to " + p.RecepientAddress())
 	}
 	office.AddSender(post.EnvelopePackageType, envelopeSender)

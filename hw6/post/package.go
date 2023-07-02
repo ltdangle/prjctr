@@ -4,13 +4,13 @@ const BoxPackageType = "box"
 const EnvelopePackageType = "envelope"
 
 // Package interface.
-type PackageI interface {
+type Package interface {
 	PackageType() string
 	SenderAddress() string
 	RecepientAddress() string
 }
 
-// box implementation of PackageI
+// box implementation of Package
 type box struct {
 }
 
@@ -28,7 +28,7 @@ func (b *box) RecepientAddress() string {
 	return "recepient address"
 }
 
-// Envelope implementation of PackageI
+// Envelope implementation of Package
 type Envelope struct {
 }
 
