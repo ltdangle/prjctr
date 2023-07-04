@@ -8,7 +8,8 @@ import (
 )
 
 type Args struct {
-	A, B int
+	ProductId   int
+	ProductName string
 }
 
 func main() {
@@ -16,10 +17,10 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	args := Args{1, 2}
+	args := Args{ProductId: 1,ProductName: "new product"}
 	var result int
 	if err := client.Call("Shop.Add", args, &result); err != nil {
 		log.Fatal().Err(err).Msg("Can't call calculator method")
 	}
-	log.Info().Msgf("%v + %v = %v", args.A, args.B, result)
+	log.Info().Msgf("%v + %v = %v", args.ProductId, args.ProductName, result)
 }

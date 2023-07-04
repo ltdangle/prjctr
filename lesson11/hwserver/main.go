@@ -12,13 +12,23 @@ import (
 // Сервер виконує роль кошика інтернет-магазина. Кошик очікує id і name товара. Додає до кошику, оновлює і видаляє.
 // Клієнт виконує роль клієнта і працює із кошиком: додате, видаляє і редагує товари
 type Args struct {
-	A, B int
+	ProductId   int
+	ProductName string
 }
-type Shop int
 
-func (c *Shop) Add(args *Args, result *int) error {
+type Product struct {
+	id   int
+	name string
+}
+
+type Shop struct {
+	products []*Product
+}
+
+func (c *Shop) Add(args *Args, result *int,) error {
 	log.Info().Msg("Operation Add")
-	*result = args.A + args.B
+	c.products = append(c.products, &Product{id: args.ProductId, name: args.ProductName})
+	*result=len(c.products)
 	return nil
 }
 
