@@ -46,7 +46,7 @@ func main() {
 	var calculator Calculator
 
 	rpcServer := rpc.NewServer()
-	rpcServer.Register(calculator)
+	rpcServer.Register(&calculator)
 	listener, err := net.Listen("tcp", ":8080")
 	
 	if err != nil {
