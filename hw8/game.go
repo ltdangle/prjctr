@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 	// "time"
 )
@@ -25,6 +28,9 @@ type winner struct {
 }
 
 func main() {
+	// Start a goroutine that will do something when a signal is received
+	shutDownListener()
+
 	var players []*player
 	guessChan := make(chan guess)
 	// Referee channel.
@@ -75,18 +81,18 @@ func roundGenerator(players []*player, refChan chan round) {
 
 	roundCount := 0
 
-	roundFn:=func(t time.Time){
-			fmt.Printf("\nNew round at: %v", t)
+	roundFn := func(t time.Time) {
+		fmt.Printf("\nNew round at: %v", t)
 
-			round := round{id: roundCount}
+		round := round{id: roundCount}
 
-			for _, player := range players {
-				player.gameCh <- round
-			}
+		for _, player := range players {
+			player.gameCh <- round
+		}
 
-			refChan <- round
+		refChan <- round
 
-			roundCount++
+		roundCount++
 	}
 
 	// Run on start, don't wait for ticker on first run.
@@ -96,7 +102,7 @@ func roundGenerator(players []*player, refChan chan round) {
 	for {
 		select {
 		case t := <-ticker.C:
-		roundFn(t)
+			roundFn(t)
 		}
 	}
 }
@@ -113,4 +119,20 @@ func playerGoroutine(p *player, guesses chan guess) {
 			fmt.Printf("\nPlayer %d for round number %d sent guess %d", p.id, round.id, guess.number)
 		}
 	}
+}
+
+func shutDownListener() {
+	// Create a channel to receive OS signals
+	sigs := make(chan os.Signal, 1)
+
+	// Register the channel to receive SIGINT signals (CTRL-C)
+	signal.Notify(sigs, syscall.SIGINT)
+
+	go func() {
+		sig := <-sigs
+		fmt.Println()
+		fmt.Println(sig)
+		fmt.Println("Exiting......")
+		os.Exit(0)
+	}()
 }
