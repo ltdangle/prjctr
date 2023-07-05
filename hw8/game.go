@@ -22,31 +22,32 @@ type guess struct {
 
 func main() {
 	var players []*player
-	guesses := make(chan guess)
-	roundTimer := make(chan round)
+	guessChan := make(chan guess)
+	// Referee channel.
+	refChan := make(chan round)
 
 	// Init players.
 	for i := 0; i < 5; i++ {
 		p := &player{id: i, gameCh: make(chan round)}
 		players = append(players, p)
-		go playerGoroutine(p, guesses)
+		go playerGoroutine(p, guessChan)
 	}
-	go roundGenerator(players, roundTimer)
-	go roundReferee(players, guesses, roundTimer)
+	go roundGenerator(players, refChan)
+	go roundReferee(players, guessChan, refChan)
 	time.Sleep(90 * time.Second)
 }
-func roundReferee(players []*player, guesses chan guess, roundTimer chan round) {
+func roundReferee(players []*player, guesses chan guess, refChan chan round) {
 	for {
 		select {
 		case guess := <-guesses:
 			fmt.Printf("\nroundReferee received: [round: %d, player: %d, number: %d]", guess.roundId, guess.playerId, guess.number)
-		case round := <-roundTimer:
+		case round := <-refChan:
 			fmt.Printf("\nroundReferee received new round notification for round %d", round.id)
 		}
 	}
 }
 
-func roundGenerator(players []*player, roundTimer chan round) {
+func roundGenerator(players []*player, refChan chan round) {
 	ticker := time.NewTicker(10 * time.Second)
 	defer ticker.Stop()
 
@@ -62,7 +63,7 @@ func roundGenerator(players []*player, roundTimer chan round) {
 				player.gameCh <- round
 			}
 
-			roundTimer <- round
+			refChan <- round
 
 			roundCount++
 		}
