@@ -9,7 +9,6 @@ import (
 	"sync"
 	"syscall"
 	"time"
-	// "time"
 )
 
 type round struct {
@@ -30,31 +29,39 @@ type winner struct {
 }
 
 func main() {
+	var players []*player
+
 	var wg sync.WaitGroup
 
 	ctx, cancel := context.WithCancel(context.Background())
 
+	// Register shutdown function.
 	shutDownListener(cancel, &wg)
 
-	var players []*player
+	// Players send guesses this channel.
 	guessChan := make(chan guess)
 	// Referee channel.
 	refChan := make(chan round)
 	// Winner channel.
 	winnerCh := make(chan winner)
 
-	// Init players.
+	// Init players and player gorutines.
 	for i := 0; i < 5; i++ {
 		p := &player{id: i, gameCh: make(chan round)}
 		players = append(players, p)
 		wg.Add(1)
-		go playerGoroutine(ctx, p, guessChan, &wg)
+		go playerRtn(ctx, p, guessChan, &wg)
 	}
+	
+	// Init round generator.
 	wg.Add(1)
-	go roundGenerator(ctx, players, refChan, &wg)
-	wg.Add(1)
-	go roundReferee(ctx, players, guessChan, refChan, winnerCh, &wg)
+	go roundGeneratorRtn(ctx, players, refChan, &wg)
 
+	// Init referee gorutine.
+	wg.Add(1)
+	go refereeRtn(ctx, players, guessChan, refChan, winnerCh, &wg)
+
+	// Poll for winner.
 	for {
 		select {
 		case winner := <-winnerCh:
@@ -64,7 +71,7 @@ func main() {
 	}
 }
 
-func roundReferee(ctx context.Context, players []*player, guessChan chan guess, refChan chan round, winnerCh chan winner, wg *sync.WaitGroup) {
+func refereeRtn(ctx context.Context, players []*player, guessChan chan guess, refChan chan round, winnerCh chan winner, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	for {
@@ -87,7 +94,7 @@ func roundReferee(ctx context.Context, players []*player, guessChan chan guess, 
 	}
 }
 
-func roundGenerator(ctx context.Context, players []*player, refChan chan round, wg *sync.WaitGroup) {
+func roundGeneratorRtn(ctx context.Context, players []*player, refChan chan round, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	ticker := time.NewTicker(10 * time.Second)
@@ -124,7 +131,7 @@ func roundGenerator(ctx context.Context, players []*player, refChan chan round, 
 	}
 }
 
-func playerGoroutine(ctx context.Context, p *player, guesses chan guess, wg *sync.WaitGroup) {
+func playerRtn(ctx context.Context, p *player, guesses chan guess, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	fmt.Printf("\nPlayer %d is ready.", p.id)
