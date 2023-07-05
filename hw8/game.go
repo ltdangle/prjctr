@@ -11,16 +11,21 @@ type round struct {
 	id int
 }
 type player struct {
-	playerNumber int
+	id int
 	gameCh       chan round
+}
+type guess struct {
+	roundId int
+	playerId int
+	number int
 }
 
 func main() {
 	var players []*player
-	guesses:=make(chan int)
+	guesses:=make(chan guess)
 	// Init players.
 	for i := 0; i < 5; i++ {
-		p := &player{playerNumber: i, gameCh: make(chan round)}
+		p := &player{id: i, gameCh: make(chan round)}
 		players = append(players, p)
 		go playerGoroutine(p, guesses)
 	}
@@ -28,11 +33,11 @@ func main() {
 	go roundReferee(players,guesses)
 	time.Sleep(90 * time.Second)
 }
-func roundReferee(players []*player, guesses chan int) {
+func roundReferee(players []*player, guesses chan guess) {
 	for {
 		select {
 		case guess := <-guesses:
-			fmt.Printf("\nroundReferee received: %d", guess)
+			fmt.Printf("\nroundReferee received: [round: %d, player: %d, number: %d]", guess.roundId, guess.playerId, guess.number)
 		}
 	}
 }
@@ -54,16 +59,16 @@ func roundGenerator(players []*player) {
 	}
 }
 
-func playerGoroutine(p *player, guesses chan int) {
-	fmt.Printf("\nPlayer %d is ready.", p.playerNumber)
+func playerGoroutine(p *player, guesses chan guess) {
+	fmt.Printf("\nPlayer %d is ready.", p.id)
 	for {
 		select {
 		case round := <-p.gameCh:
-			fmt.Printf("\nPlayer %d received new round number %d.", p.playerNumber, round.id)
-			guess:=rand.Intn(5)
-			time.Sleep(time.Duration(guess)*time.Second)
+			fmt.Printf("\nPlayer %d received new round number %d.", p.id, round.id)
+			guess:=guess{roundId: round.id, playerId: p.id, number:  rand.Intn(5)}
+			time.Sleep(time.Duration(guess.number)*time.Second)
 			guesses<-guess
-			fmt.Printf("\nPlayer %d for round number %d sent guess %d", p.playerNumber, round.id, guess)
+			fmt.Printf("\nPlayer %d for round number %d sent guess %d", p.id, round.id, guess.number)
 		}
 	}
 }
