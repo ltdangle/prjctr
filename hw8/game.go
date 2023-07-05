@@ -19,12 +19,18 @@ type guess struct {
 	playerId int
 	number   int
 }
+type winner struct {
+	roundId  int
+	playerId int
+}
 
 func main() {
 	var players []*player
 	guessChan := make(chan guess)
 	// Referee channel.
 	refChan := make(chan round)
+	// Winner channel.
+	winnerCh := make(chan winner)
 
 	// Init players.
 	for i := 0; i < 5; i++ {
@@ -33,16 +39,32 @@ func main() {
 		go playerGoroutine(p, guessChan)
 	}
 	go roundGenerator(players, refChan)
-	go roundReferee(players, guessChan, refChan)
-	time.Sleep(90 * time.Second)
-}
-func roundReferee(players []*player, guesses chan guess, refChan chan round) {
+	go roundReferee(players, guessChan, refChan, winnerCh)
+
 	for {
 		select {
-		case guess := <-guesses:
+		case winner := <-winnerCh:
+			fmt.Printf("\n------------------\nThe winner for round %d is player %d !\n------------------", winner.roundId, winner.playerId)
+		default:
+		}
+	}
+	// TODO: handle shutdown
+}
+
+func roundReferee(players []*player, guessChan chan guess, refChan chan round, winnerCh chan winner) {
+	for {
+		select {
+		case guess := <-guessChan:
 			fmt.Printf("\nroundReferee received: [round: %d, player: %d, number: %d]", guess.roundId, guess.playerId, guess.number)
 		case round := <-refChan:
 			fmt.Printf("\nroundReferee received new round notification for round %d", round.id)
+			// Randomly calculate winner for prev. round.
+			if round.id > 0 {
+				prevRound := round.id - 1
+				winnerId := rand.Intn(len(players))
+				fmt.Printf("\nThe winner for %d is player %d !", prevRound, winnerId)
+				winnerCh <- winner{roundId: prevRound, playerId: winnerId}
+			}
 		}
 	}
 }
