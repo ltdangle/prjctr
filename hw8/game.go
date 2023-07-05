@@ -19,20 +19,30 @@ func main() {
 		players = append(players, p)
 		go playerGoroutine(p)
 	}
-	go gameLoop()
-	time.Sleep(9*time.Second)
+	go gameLoop(players)
+	time.Sleep(9 * time.Second)
 }
 
-func gameLoop() {
+func gameLoop(players []*player) {
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
 	for {
 		select {
 		case t := <-ticker.C:
-			fmt.Printf("\nCurrent time: %v", t)
+			fmt.Printf("\nNew round at: %v", t)
+			for _, player := range players {
+				player.gameCh <- ""
+			}
 		}
 	}
 }
+
 func playerGoroutine(p *player) {
 	fmt.Printf("\nPlayer %d is ready.", p.playerNumber)
+	for {
+		select {
+		case <-p.gameCh:
+			fmt.Printf("\nPlayer %d received new round.", p.playerNumber)
+		}
+	}
 }
