@@ -91,6 +91,8 @@ func roundGenerator(players []*player, refChan chan round) {
 
 	// Run on start, don't wait for ticker on first run.
 	roundFn(time.Now())
+
+	// Run periodically from now on.
 	for {
 		select {
 		case t := <-ticker.C:
