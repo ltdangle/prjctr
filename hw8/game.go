@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 	// "time"
 )
 
@@ -18,9 +19,20 @@ func main() {
 		players = append(players, p)
 		go playerGoroutine(p)
 	}
-	// time.Sleep(2*time.Second)
+	go gameLoop()
+	time.Sleep(9*time.Second)
 }
 
+func gameLoop() {
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case t := <-ticker.C:
+			fmt.Printf("\nCurrent time: %v", t)
+		}
+	}
+}
 func playerGoroutine(p *player) {
 	fmt.Printf("\nPlayer %d is ready.", p.playerNumber)
 }
