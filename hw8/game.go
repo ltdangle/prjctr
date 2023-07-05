@@ -74,9 +74,8 @@ func roundGenerator(players []*player, refChan chan round) {
 	defer ticker.Stop()
 
 	roundCount := 0
-	for {
-		select {
-		case t := <-ticker.C:
+
+	roundFn:=func(t time.Time){
 			fmt.Printf("\nNew round at: %v", t)
 
 			round := round{id: roundCount}
@@ -88,6 +87,14 @@ func roundGenerator(players []*player, refChan chan round) {
 			refChan <- round
 
 			roundCount++
+	}
+
+	// Run on start, don't wait for ticker on first run.
+	roundFn(time.Now())
+	for {
+		select {
+		case t := <-ticker.C:
+		roundFn(t)
 		}
 	}
 }
