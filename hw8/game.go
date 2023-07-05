@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 	// "time"
@@ -29,9 +30,11 @@ type winner struct {
 }
 
 func main() {
+	var wg sync.WaitGroup
+
 	ctx, cancel := context.WithCancel(context.Background())
 
-	shutDownListener(cancel)
+	shutDownListener(cancel, &wg)
 
 	var players []*player
 	guessChan := make(chan guess)
@@ -44,10 +47,13 @@ func main() {
 	for i := 0; i < 5; i++ {
 		p := &player{id: i, gameCh: make(chan round)}
 		players = append(players, p)
-		go playerGoroutine(ctx, p, guessChan)
+		wg.Add(1)
+		go playerGoroutine(ctx, p, guessChan, &wg)
 	}
-	go roundGenerator(ctx, players, refChan)
-	go roundReferee(ctx, players, guessChan, refChan, winnerCh)
+	wg.Add(1)
+	go roundGenerator(ctx, players, refChan, &wg)
+	wg.Add(1)
+	go roundReferee(ctx, players, guessChan, refChan, winnerCh, &wg)
 
 	for {
 		select {
@@ -58,7 +64,9 @@ func main() {
 	}
 }
 
-func roundReferee(ctx context.Context, players []*player, guessChan chan guess, refChan chan round, winnerCh chan winner) {
+func roundReferee(ctx context.Context, players []*player, guessChan chan guess, refChan chan round, winnerCh chan winner, wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	for {
 		select {
 		case <-ctx.Done():
@@ -79,7 +87,9 @@ func roundReferee(ctx context.Context, players []*player, guessChan chan guess, 
 	}
 }
 
-func roundGenerator(ctx context.Context, players []*player, refChan chan round) {
+func roundGenerator(ctx context.Context, players []*player, refChan chan round, wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	ticker := time.NewTicker(10 * time.Second)
 	defer ticker.Stop()
 
@@ -106,7 +116,7 @@ func roundGenerator(ctx context.Context, players []*player, refChan chan round) 
 	for {
 		select {
 		case <-ctx.Done():
-			fmt.Println("Round generator is shutting down....")
+			fmt.Printf("\nRound generator is shutting down....")
 			return
 		case t := <-ticker.C:
 			roundFn(t)
@@ -114,7 +124,9 @@ func roundGenerator(ctx context.Context, players []*player, refChan chan round) 
 	}
 }
 
-func playerGoroutine(ctx context.Context, p *player, guesses chan guess) {
+func playerGoroutine(ctx context.Context, p *player, guesses chan guess, wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	fmt.Printf("\nPlayer %d is ready.", p.id)
 	for {
 		select {
@@ -130,7 +142,8 @@ func playerGoroutine(ctx context.Context, p *player, guesses chan guess) {
 	}
 }
 
-func shutDownListener(cancel func()) {
+func shutDownListener(cancel func(), wg *sync.WaitGroup) {
+
 	// Create a channel to receive OS signals
 	sigs := make(chan os.Signal, 1)
 
@@ -143,8 +156,7 @@ func shutDownListener(cancel func()) {
 		fmt.Println(sig)
 		fmt.Println("Exiting......")
 		cancel()
-		// TODO
-		time.Sleep(2 * time.Second)
+		wg.Wait()
 		os.Exit(0)
 	}()
 }
