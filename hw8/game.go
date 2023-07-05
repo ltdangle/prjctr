@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"os"
@@ -28,8 +29,9 @@ type winner struct {
 }
 
 func main() {
-	// Start a goroutine that will do something when a signal is received
-	shutDownListener()
+	ctx, cancel := context.WithCancel(context.Background())
+
+	shutDownListener(cancel)
 
 	var players []*player
 	guessChan := make(chan guess)
@@ -42,10 +44,10 @@ func main() {
 	for i := 0; i < 5; i++ {
 		p := &player{id: i, gameCh: make(chan round)}
 		players = append(players, p)
-		go playerGoroutine(p, guessChan)
+		go playerGoroutine(ctx, p, guessChan)
 	}
-	go roundGenerator(players, refChan)
-	go roundReferee(players, guessChan, refChan, winnerCh)
+	go roundGenerator(ctx, players, refChan)
+	go roundReferee(ctx, players, guessChan, refChan, winnerCh)
 
 	for {
 		select {
@@ -54,16 +56,18 @@ func main() {
 		default:
 		}
 	}
-	// TODO: handle shutdown
 }
 
-func roundReferee(players []*player, guessChan chan guess, refChan chan round, winnerCh chan winner) {
+func roundReferee(ctx context.Context, players []*player, guessChan chan guess, refChan chan round, winnerCh chan winner) {
 	for {
 		select {
+		case <-ctx.Done():
+			fmt.Printf("\nReferee is shutting down....")
+			return
 		case guess := <-guessChan:
-			fmt.Printf("\nroundReferee received: [round: %d, player: %d, number: %d]", guess.roundId, guess.playerId, guess.number)
+			fmt.Printf("\nReferee received: [round: %d, player: %d, number: %d]", guess.roundId, guess.playerId, guess.number)
 		case round := <-refChan:
-			fmt.Printf("\nroundReferee received new round notification for round %d", round.id)
+			fmt.Printf("\nReferee received new round notification for round %d", round.id)
 			// Randomly calculate winner for prev. round.
 			if round.id > 0 {
 				prevRound := round.id - 1
@@ -75,7 +79,7 @@ func roundReferee(players []*player, guessChan chan guess, refChan chan round, w
 	}
 }
 
-func roundGenerator(players []*player, refChan chan round) {
+func roundGenerator(ctx context.Context, players []*player, refChan chan round) {
 	ticker := time.NewTicker(10 * time.Second)
 	defer ticker.Stop()
 
@@ -101,18 +105,23 @@ func roundGenerator(players []*player, refChan chan round) {
 	// Run periodically from now on.
 	for {
 		select {
+		case <-ctx.Done():
+			fmt.Println("Round generator is shutting down....")
+			return
 		case t := <-ticker.C:
 			roundFn(t)
 		}
 	}
 }
 
-func playerGoroutine(p *player, guesses chan guess) {
+func playerGoroutine(ctx context.Context, p *player, guesses chan guess) {
 	fmt.Printf("\nPlayer %d is ready.", p.id)
 	for {
 		select {
+		case <-ctx.Done():
+			fmt.Printf("\nGorutine for player %d is shutting down...", p.id)
+			return
 		case round := <-p.gameCh:
-			fmt.Printf("\nPlayer %d received new round number %d.", p.id, round.id)
 			guess := guess{roundId: round.id, playerId: p.id, number: rand.Intn(5)}
 			time.Sleep(time.Duration(guess.number) * time.Second)
 			guesses <- guess
@@ -121,7 +130,7 @@ func playerGoroutine(p *player, guesses chan guess) {
 	}
 }
 
-func shutDownListener() {
+func shutDownListener(cancel func()) {
 	// Create a channel to receive OS signals
 	sigs := make(chan os.Signal, 1)
 
@@ -133,6 +142,9 @@ func shutDownListener() {
 		fmt.Println()
 		fmt.Println(sig)
 		fmt.Println("Exiting......")
+		cancel()
+		// TODO
+		time.Sleep(2 * time.Second)
 		os.Exit(0)
 	}()
 }
