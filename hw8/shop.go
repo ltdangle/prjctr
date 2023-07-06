@@ -22,14 +22,16 @@ type order struct {
 
 func main() {
 	var wg sync.WaitGroup
-	ordersCh := make(chan order)
+	ordersCh := make(chan *order)
 
 	wg.Add(1)
 	// Calculates order total
 	go func() {
 		defer wg.Done()
 		for ordr := range ordersCh {
+			calculateTotals(ordr)
 			fmt.Printf("\nReceived order %v", ordr)
+
 		}
 	}()
 
@@ -49,7 +51,7 @@ func main() {
 				if counter == orders {
 					break ticker
 				}
-				ordersCh <-createOrder()
+				ordersCh <- createOrder()
 				counter++
 			}
 		}
@@ -59,7 +61,7 @@ func main() {
 	wg.Wait()
 	fmt.Printf("\nProgram exited.")
 }
-func createOrder() order {
+func createOrder() *order {
 	var products []product
 
 	for i := 0; i < rand.Intn(5); i++ {
@@ -67,7 +69,7 @@ func createOrder() order {
 	}
 
 	id := rand.Intn(100)
-	return order{id: id, name: "Product_" + strconv.Itoa(id), products: products}
+	return &order{id: id, name: "Product_" + strconv.Itoa(id), products: products}
 }
 
 func createProduct() product {
