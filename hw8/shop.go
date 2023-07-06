@@ -22,7 +22,7 @@ type order struct {
 
 func main() {
 	var wg sync.WaitGroup
-	ordersCh:=make(chan order)
+	ordersCh := make(chan order)
 
 	wg.Add(1)
 	// Calculates order total
@@ -39,18 +39,17 @@ func main() {
 		defer wg.Done()
 		ticker := time.NewTicker(1 * time.Second)
 
-		orders:=5
-		counter:=1
+		orders := 5
+		counter := 1
 
-		ticker:
+	ticker:
 		for {
 			select {
 			case <-ticker.C:
-				if counter==orders{
+				if counter == orders {
 					break ticker
 				}
-				id := rand.Intn(100)
-				ordersCh <- order{id: id, name: "Order_" + strconv.Itoa(id)}
+				ordersCh <-createOrder()
 				counter++
 			}
 		}
@@ -58,5 +57,26 @@ func main() {
 	}()
 
 	wg.Wait()
-	fmt.Println("Program exited.")
+	fmt.Printf("\nProgram exited.")
+}
+func createOrder() order {
+	var products []product
+
+	for i := 0; i < rand.Intn(5); i++ {
+		products = append(products, createProduct())
+	}
+
+	id := rand.Intn(100)
+	return order{id: id, name: "Product_" + strconv.Itoa(id), products: products}
+}
+
+func createProduct() product {
+	id := rand.Intn(100)
+	return product{id: id, name: "Product_" + strconv.Itoa(id), price: rand.Intn(100)}
+}
+
+func calculateTotals(order *order) {
+	for _, product := range order.products {
+		order.total += product.price
+	}
 }
