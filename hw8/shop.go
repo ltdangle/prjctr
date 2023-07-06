@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"math/rand"
 	"strconv"
@@ -24,43 +25,47 @@ func main() {
 	var wg sync.WaitGroup
 	ordersCh := make(chan *order)
 
-	wg.Add(1)
-	// Calculates order total
-	go func() {
-		defer wg.Done()
-		for ordr := range ordersCh {
-			calculateTotals(ordr)
-			fmt.Printf("\nReceived order %v", ordr)
-
-		}
-	}()
+	orderCount := flag.Int("orders", 1, "Number of orders to generate")
+	flag.Parse()
 
 	wg.Add(1)
-	// Calculates order total
-	go func() {
-		defer wg.Done()
-		ticker := time.NewTicker(1 * time.Second)
+	go processOrdersRtn(&wg, ordersCh)
 
-		orders := 5
-		counter := 1
-
-	ticker:
-		for {
-			select {
-			case <-ticker.C:
-				if counter == orders {
-					break ticker
-				}
-				ordersCh <- createOrder()
-				counter++
-			}
-		}
-		close(ordersCh)
-	}()
+	wg.Add(1)
+	go createOrdersRtn(&wg, ordersCh, *orderCount)
 
 	wg.Wait()
 	fmt.Printf("\nProgram exited.")
 }
+
+func processOrdersRtn(wg *sync.WaitGroup, ordersCh chan *order) {
+	defer wg.Done()
+	for ordr := range ordersCh {
+		calculateTotals(ordr)
+		fmt.Printf("\nReceived order %v", ordr)
+	}
+}
+
+func createOrdersRtn(wg *sync.WaitGroup, ordersCh chan *order, numOrders int) {
+	defer wg.Done()
+	ticker := time.NewTicker(1 * time.Second)
+
+	counter := 0
+
+ticker:
+	for {
+		select {
+		case <-ticker.C:
+			if counter == numOrders{
+				break ticker
+			}
+			ordersCh <- createOrder()
+			counter++
+		}
+	}
+	close(ordersCh)
+}
+
 func createOrder() *order {
 	var products []product
 
