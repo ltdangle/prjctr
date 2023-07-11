@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	u "net/url"
+	"strings"
 )
 
 type TranslateResponse struct {
@@ -22,6 +23,12 @@ func translateHandler(w http.ResponseWriter, r *http.Request) {
 	from := r.URL.Query().Get("from")
 	to := r.URL.Query().Get("to")
 
+	translated := TranslateResponse{
+		Text: "",
+		From: from,
+		To:   to,
+	}
+
 	// Call api.
 	var apiResponse string
 	url := "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" + from + "&tl=" + to + "&dt=t&q=" + u.QueryEscape(text)
@@ -35,12 +42,27 @@ func translateHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(apiResponse)
 
-	translate := TranslateResponse{
-		Text: text,
-		From: from,
-		To:   to,
+	// Parse translated text from api response.
+	var result []interface{}
+	var ctext []string
+
+	err = json.Unmarshal([]byte(apiResponse), &result)
+	if err != nil {
+		fmt.Println("Error unmarshaling data")
 	}
-	json.NewEncoder(w).Encode(translate)
+
+	if len(result) > 0 {
+		inner := result[0]
+		for _, slice := range inner.([]interface{}) {
+			for _, translatedText := range slice.([]interface{}) {
+				ctext = append(ctext, fmt.Sprintf("%v", translatedText))
+				break
+			}
+		}
+		translated.Text = strings.Join(ctext, "")
+	}
+
+	json.NewEncoder(w).Encode(translated)
 }
 
 func main() {
