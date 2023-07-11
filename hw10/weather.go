@@ -39,13 +39,13 @@ func weatherHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Convert api result into our json response.
-	var jsonResponse = WeatherResponse{
+	var weather = WeatherResponse{
 		Temp:     result["current"].(map[string]interface{})["temp_c"].(float64),
 		Wind:     result["current"].(map[string]interface{})["wind_kph"].(float64),
 		Humidity: result["current"].(map[string]interface{})["humidity"].(float64),
 	}
 
-	json.NewEncoder(w).Encode(jsonResponse)
+	json.NewEncoder(w).Encode(weather)
 }
 
 func main() {
