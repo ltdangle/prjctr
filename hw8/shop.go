@@ -50,17 +50,10 @@ func createOrdersRtn(wg *sync.WaitGroup, ordersCh chan *order, numOrders int) {
 	defer wg.Done()
 	ticker := time.NewTicker(1 * time.Second)
 
-	counter := 0
-
-ticker:
-	for {
+	for i := 0; i < numOrders; i++ {
 		select {
 		case <-ticker.C:
-			if counter == numOrders{
-				break ticker
-			}
 			ordersCh <- createOrder()
-			counter++
 		}
 	}
 	close(ordersCh)
