@@ -7,6 +7,16 @@ import (
 	"net/http"
 )
 
+type User struct {
+	Username string
+	Password string
+}
+
+var teacherUser = User{
+	Username: "teacher",
+	Password: "teacher",
+}
+
 func main() {
 	port := ":8080"
 
@@ -20,7 +30,7 @@ func main() {
 	rspndr := NewResponder("2006-01-02 15:04:05")
 	app := NewApp(class, rspndr)
 
-	http.HandleFunc("/student", app.httpHandler)
+	http.Handle("/student", auth(http.HandlerFunc(app.httpHandler)))
 
 	fmt.Println("Server started on port " + port)
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -34,27 +44,4 @@ func seedClass(class *Class, numStudents int) {
 	}
 }
 
-type User struct {
-	Username string
-	Password string
-}
 
-var adminUser = User{
-	Username: "admin",
-	Password: "admin",
-}
-
-func auth(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		username, password, ok := r.BasicAuth()
-		if !ok {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		if username != adminUser.Username || password != adminUser.Password {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
-}
