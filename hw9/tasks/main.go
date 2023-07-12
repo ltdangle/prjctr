@@ -12,17 +12,25 @@ import (
 func httpHandler(w http.ResponseWriter, r *http.Request) {
 	rspndr := NewResponder("2006-01-02 15:04:05")
 
-	date := r.URL.Query().Get("date")
+	dateInp := r.URL.Query().Get("date")
 
 	// Validate date is in correct format.
 	dateRegex := `^\d{4}-\d{2}-\d{2}$`
 	rgxp, _ := regexp.Compile(dateRegex)
-	match := rgxp.FindString(date)
+	dateStr := rgxp.FindString(dateInp)
 
-	if match == "" {
+	if dateStr == "" {
 		rspndr.Error(w, http.StatusBadRequest, "Malformed date string.")
 		return
 	}
+
+	// Validate date is a valid date.
+	_, err := time.Parse("2006-01-02", dateStr)
+	if err != nil {
+		rspndr.Error(w, http.StatusBadRequest, "Incorrect date string.")
+		return
+	}
+
 }
 
 func main() {
