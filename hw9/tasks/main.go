@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
@@ -11,7 +12,11 @@ func main() {
 	port := ":8080"
 
 	taskList := NewTaskList()
-	seedTasks(taskList, 20)
+	seedTasks(taskList, 5)
+
+	// Dump data in console for debugging
+	taskListJsonData, _ := json.MarshalIndent(taskList, "", " ")
+	fmt.Println(string(taskListJsonData))
 
 	rspndr:=NewResponder("2006-01-02 15:04:05")
 	app := NewApp(taskList, rspndr)
@@ -24,7 +29,7 @@ func main() {
 
 func seedTasks(taskList *TaskList, numTasks int) {
 	for i := 0; i < numTasks; i++ {
-		rnd := rand.Intn(10)
+		rnd := rand.Intn(100)
 		task := &Task{
 			Name: fmt.Sprintf("Task_%d", rnd),
 			Due:  time.Now().AddDate(0, 0, rnd),

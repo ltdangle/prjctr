@@ -33,10 +33,13 @@ func (app *App) httpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validate date is a valid date.
-	_, err := time.Parse("2006-01-02", dateStr)
+	date, err := time.Parse("2006-01-02", dateStr)
 	if err != nil {
 		app.rspndr.Error(w, http.StatusBadRequest, "Incorrect date string.")
 		return
 	}
-	app.rspndr.Success(w, "ok")
+
+	// Find tasks on the specified date.
+	tasks := app.taskList.findTasks(date)
+	app.rspndr.Success(w,  tasks)
 }

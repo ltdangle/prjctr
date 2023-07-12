@@ -10,7 +10,7 @@ type Task struct {
 
 // Tasklist stuct.
 type TaskList struct {
-	tasks []*Task
+	Tasks []*Task `json:"tasks"`
 }
 
 func NewTaskList() *TaskList {
@@ -18,13 +18,13 @@ func NewTaskList() *TaskList {
 }
 
 func (t *TaskList) add(task *Task) {
-	t.tasks = append(t.tasks, task)
+	t.Tasks = append(t.Tasks, task)
 }
 
 func (t *TaskList) findTasks(tm time.Time) []*Task {
 	var matches []*Task
 
-	for _, task := range t.tasks {
+	for _, task := range t.Tasks {
 		if tm.Year() == task.Due.Year() && tm.Month() == task.Due.Month() && tm.Day() == task.Due.Day() {
 			matches = append(matches, task)
 		}

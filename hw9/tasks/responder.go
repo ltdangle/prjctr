@@ -26,11 +26,11 @@ func NewResponder(dateFormat string) *Responder {
 	return &Responder{dateFormat: dateFormat}
 }
 
-func (rspndr *Responder) Error(w http.ResponseWriter, statusCode int, error string) {
+func (rspndr *Responder) Error(w http.ResponseWriter, statusCode int, message string) {
 	// Build json response.
 	r := NewResponse()
 	r.Date = time.Now().Format(rspndr.dateFormat)
-	r.Message = error
+	r.Message = message
 
 	// Send response.
 	w.Header().Set("Content-Type", "application/json")
@@ -42,8 +42,8 @@ func (rspndr *Responder) Success(w http.ResponseWriter, payload interface{}) {
 	// Build json response.
 	r := NewResponse()
 	r.Date = time.Now().Format(rspndr.dateFormat)
-	r.Message = "success"
-	r.Payload=payload
+	r.Message = "ok"
+	r.Payload = payload
 
 	// Send response.
 	w.Header().Set("Content-Type", "application/json")
