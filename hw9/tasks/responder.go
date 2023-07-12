@@ -14,21 +14,22 @@ type Response struct {
 }
 
 func NewResponse() *Response {
-	return &Response{
-		Date: time.Now().Format("2006-01-02 15:04:05"),
-	}
+	return &Response{}
 }
 
 // Responder.
-type Responder struct{}
+type Responder struct {
+	dateFormat string
+}
 
-func NewResponder() *Responder {
-	return &Responder{}
+func NewResponder(dateFormat string) *Responder {
+	return &Responder{dateFormat: dateFormat}
 }
 
 func (rspndr *Responder) Error(w http.ResponseWriter, statusCode int, error string) {
 	// Build json response.
 	r := NewResponse()
+	r.Date = time.Now().Format(rspndr.dateFormat)
 	r.Message = error
 
 	// Send response.

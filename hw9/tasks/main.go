@@ -10,7 +10,7 @@ import (
 )
 
 func httpHandler(w http.ResponseWriter, r *http.Request) {
-	rspndr := NewResponder()
+	rspndr := NewResponder("2006-01-02 15:04:05")
 
 	date := r.URL.Query().Get("date")
 
