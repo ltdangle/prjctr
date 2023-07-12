@@ -3,29 +3,29 @@ package main
 import "time"
 
 // Task stuct.
-type task struct {
-	name string
-	due time.Time
+type Task struct {
+	Name string    `json:"name"`
+	Due  time.Time `json:"due"`
 }
 
 // Tasklist stuct.
-type taskList struct {
-	tasks []*task
+type TaskList struct {
+	tasks []*Task
 }
 
-func NewTaskList() *taskList {
-	return &taskList{}
+func NewTaskList() *TaskList {
+	return &TaskList{}
 }
 
-func (t *taskList) add(task *task) {
+func (t *TaskList) add(task *Task) {
 	t.tasks = append(t.tasks, task)
 }
 
-func (t *taskList) findTasks(tm time.Time) []*task {
-	var matches []*task
+func (t *TaskList) findTasks(tm time.Time) []*Task {
+	var matches []*Task
 
 	for _, task := range t.tasks {
-		if tm.Year() == task.due.Year() && tm.Month() == task.due.Month() && tm.Day() == task.due.Day() {
+		if tm.Year() == task.Due.Year() && tm.Month() == task.Due.Month() && tm.Day() == task.Due.Day() {
 			matches = append(matches, task)
 		}
 	}

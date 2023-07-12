@@ -14,7 +14,7 @@ func main() {
 	seedTasks(taskList, 20)
 
 	rspndr:=NewResponder("2006-01-02 15:04:05")
-	app := NewApp(rspndr)
+	app := NewApp(taskList, rspndr)
 
 	http.HandleFunc("/tasks", app.httpHandler)
 
@@ -22,12 +22,12 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func seedTasks(taskList *taskList, numTasks int) {
+func seedTasks(taskList *TaskList, numTasks int) {
 	for i := 0; i < numTasks; i++ {
 		rnd := rand.Intn(10)
-		task := &task{
-			name: fmt.Sprintf("Task_%d", rnd),
-			due:  time.Now().AddDate(0, 0, rnd),
+		task := &Task{
+			Name: fmt.Sprintf("Task_%d", rnd),
+			Due:  time.Now().AddDate(0, 0, rnd),
 		}
 		taskList.add(task)
 	}

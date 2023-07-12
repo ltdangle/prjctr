@@ -6,12 +6,15 @@ import (
 	"time"
 )
 
-type App struct{
-	rspndr Responder
+type App struct {
+	taskList *TaskList
+	rspndr   *Responder
 }
-func NewApp(rspndr *Responder)*App{
+
+func NewApp(taskList *TaskList, rspndr *Responder) *App {
 	return &App{
-		rspndr: *rspndr,
+		taskList: taskList,
+		rspndr:   rspndr,
 	}
 }
 
@@ -35,6 +38,5 @@ func (app *App) httpHandler(w http.ResponseWriter, r *http.Request) {
 		app.rspndr.Error(w, http.StatusBadRequest, "Incorrect date string.")
 		return
 	}
-
+	app.rspndr.Success(w, "ok")
 }
-

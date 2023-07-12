@@ -38,10 +38,15 @@ func (rspndr *Responder) Error(w http.ResponseWriter, statusCode int, error stri
 	json.NewEncoder(w).Encode(r)
 }
 
-// func (rspndr *Responder) Success(w http.ResponseWriter, statusCode int, error string) {
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(statusCode)
-// 	json.NewEncoder(w).Encode(map[string]string{
-// 		"error": error,
-// 	})
-// }
+func (rspndr *Responder) Success(w http.ResponseWriter, payload interface{}) {
+	// Build json response.
+	r := NewResponse()
+	r.Date = time.Now().Format(rspndr.dateFormat)
+	r.Message = "success"
+	r.Payload=payload
+
+	// Send response.
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(r)
+}
