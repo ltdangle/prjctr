@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type App struct {
@@ -18,7 +20,13 @@ func NewApp(class *Class, rspndr *Responder) *App {
 }
 
 func (app *App) httpHandler(w http.ResponseWriter, r *http.Request) {
-	rawId := r.URL.Query().Get("id")
+	// Parse URL.
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) != 3 {
+		app.rspndr.Error(w, http.StatusBadRequest, "Invalid URL.")
+		return
+	}
+	rawId := parts[2]
 
 	// Error if student id is missing
 	if rawId == "" {

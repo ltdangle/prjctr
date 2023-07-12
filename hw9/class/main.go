@@ -30,7 +30,7 @@ func main() {
 	rspndr := NewResponder("2006-01-02 15:04:05")
 	app := NewApp(class, rspndr)
 
-	http.Handle("/student", auth(http.HandlerFunc(app.httpHandler)))
+	http.Handle("/", auth(http.HandlerFunc(app.httpHandler)))
 
 	fmt.Println("Server started on port " + port)
 	log.Fatal(http.ListenAndServe(":8080", nil))
