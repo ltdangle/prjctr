@@ -9,6 +9,7 @@ import (
 	"os"
 )
 
+// Api response struct.
 type LectoItem struct {
 	To         string   `json:"to"`
 	Translated []string `json:"translated"`
@@ -20,7 +21,14 @@ type LectoResponse struct {
 	TranslatedCharacters int         `json:"translated_characters"`
 }
 
-func translate(from string, to string, text string) (error, *Translation) {
+// Translator.
+type Translator struct{}
+
+func NewTranslator() *Translator {
+	return &Translator{}
+}
+
+func (t *Translator) translate(from string, to string, text string) (error, *Translation) {
 	url := "https://api.lecto.ai/v1/translate/text"
 	data := fmt.Sprintf(`{
 	"texts": ["%s"],
@@ -47,12 +55,15 @@ func translate(from string, to string, text string) (error, *Translation) {
 	body, _ := io.ReadAll(resp.Body)
 	responseJSON := string(body)
 
+	// Validate (cast) json into response object.
 	var lectoResponse LectoResponse
 	err = json.Unmarshal([]byte(responseJSON), &lectoResponse)
 	if err != nil {
 		return err, nil
 	}
 
+	// Convert api response to our response object.
 	translation := &Translation{FromLng: from, ToLng: to, Source: text, Translation: lectoResponse.Translations[0].Translated[0]}
+
 	return nil, translation
 }

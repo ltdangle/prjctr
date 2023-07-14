@@ -1,21 +1,43 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 )
 
 type App struct {
-	rspndr *Responder
+	trnsltr *Translator
+	rspndr  *Responder
 }
 
-func NewApp(rspndr *Responder) *App {
+func NewApp(trnsltr *Translator, rspndr *Responder) *App {
 	return &App{
-		rspndr: rspndr,
+		trnsltr: trnsltr,
+		rspndr:  rspndr,
 	}
 }
 
 func (app *App) httpHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("hello")
-	app.rspndr.Success(w,"hi")
+	from := r.URL.Query().Get("from")
+	to := r.URL.Query().Get("to")
+	text := r.URL.Query().Get("text")
+
+	if from == "" || to == "" || text == "" {
+		app.rspndr.Error(w, http.StatusBadRequest, "Missing request parameters.")
+		return
+	}
+	err, translated := app.trnsltr.translate(from, to, text)
+
+	if err != nil {
+		app.rspndr.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	translatedJson, err := json.Marshal(translated)
+	if err != nil {
+		app.rspndr.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	app.rspndr.Success(w, string(translatedJson))
 }
