@@ -26,18 +26,21 @@ func (app *App) httpHandler(w http.ResponseWriter, r *http.Request) {
 		app.rspndr.Error(w, http.StatusBadRequest, "Missing request parameters.")
 		return
 	}
-	err, translated := app.trnsltr.translate(from, to, text)
 
+	// Call api.
+	err, translated := app.trnsltr.translate(from, to, text)
 	if err != nil {
 		app.rspndr.Error(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
+	// Convert api result to json.
 	translatedJson, err := json.Marshal(translated)
 	if err != nil {
 		app.rspndr.Error(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
+	// Return response.
 	app.rspndr.Success(w, string(translatedJson))
 }

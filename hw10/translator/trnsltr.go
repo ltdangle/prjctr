@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 )
 
 // Api response struct.
@@ -52,12 +53,17 @@ func (t *Translator) translate(from string, to string, text string) (error, *Tra
 	}
 	defer resp.Body.Close()
 
-	body, _ := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err, nil
+	}
 	responseJSON := string(body)
 
 	// Validate (cast) json into response object.
 	var lectoResponse LectoResponse
-	err = json.Unmarshal([]byte(responseJSON), &lectoResponse)
+	decoder := json.NewDecoder(strings.NewReader(responseJSON))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&lectoResponse)
 	if err != nil {
 		return err, nil
 	}
