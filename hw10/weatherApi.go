@@ -7,17 +7,25 @@ import (
 	"io"
 	"net/http"
 )
-
-type WeatherApi struct {
-	apiKey string
+// Weather struct.
+type Weather struct {
+	City     string  `json:"city"`
+	Temp     float64 `json:"temp"`
+	Wind     float64 `json:"wind"`
+	Humidity float64 `json:"humidity"`
 }
 
+// Weather api response.
 type WeatherApiData struct {
 	Current struct {
 		TempC    float64 `json:"temp_c"`
 		WindKph  float64 `json:"wind_kph"`
 		Humidity float64 `json:"humidity"`
 	} `json:"current"`
+}
+
+type WeatherApi struct {
+	apiKey string
 }
 
 func NewWeatherApi(apiKey string) *WeatherApi {

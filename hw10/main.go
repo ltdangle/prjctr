@@ -7,19 +7,7 @@ import (
 	"os"
 )
 
-type TranslationResponse struct {
-	FromLng     string `json:"from"`
-	ToLng       string `json:"to"`
-	Source      string `json:"source"`
-	Translation string `json:"translation"`
-}
 
-type Weather struct {
-	City     string  `json:"city"`
-	Temp     float64 `json:"temp"`
-	Wind     float64 `json:"wind"`
-	Humidity float64 `json:"humidity"`
-}
 
 func main() {
 	port := ":8080"

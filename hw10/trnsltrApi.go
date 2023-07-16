@@ -9,6 +9,14 @@ import (
 	"strings"
 )
 
+// Translation struct.
+type Translation struct {
+	FromLng     string `json:"from"`
+	ToLng       string `json:"to"`
+	Source      string `json:"source"`
+	Translation string `json:"translation"`
+}
+
 // Api response struct.
 type LectoItem struct {
 	To         string   `json:"to"`
@@ -30,7 +38,7 @@ func NewTranslatorApi(apiKey string) *TranslatorApi {
 	return &TranslatorApi{apiKey: apiKey}
 }
 
-func (t *TranslatorApi) translate(from string, to string, text string) (error, *TranslationResponse) {
+func (t *TranslatorApi) translate(from string, to string, text string) (error, *Translation) {
 	url := "https://api.lecto.ai/v1/translate/text"
 	data := fmt.Sprintf(`{
 	"texts": ["%s"],
@@ -69,7 +77,7 @@ func (t *TranslatorApi) translate(from string, to string, text string) (error, *
 	}
 
 	// Convert api response to our response object.
-	translation := &TranslationResponse{FromLng: from, ToLng: to, Source: text, Translation: lectoResponse.Translations[0].Translated[0]}
+	translation := &Translation{FromLng: from, ToLng: to, Source: text, Translation: lectoResponse.Translations[0].Translated[0]}
 
 	return nil, translation
 }
