@@ -6,18 +6,20 @@ import (
 )
 
 type App struct {
-	trnsltr *Translator
-	rspndr  *Responder
+	trnsltrApi *TranslatorApi
+	weatherApi *WeatherApi
+	rspndr     *Responder
 }
 
-func NewApp(trnsltr *Translator, rspndr *Responder) *App {
+func NewApp(weatherApi *WeatherApi, trnsltr *TranslatorApi, rspndr *Responder) *App {
 	return &App{
-		trnsltr: trnsltr,
-		rspndr:  rspndr,
+		trnsltrApi: trnsltr,
+		weatherApi: weatherApi,
+		rspndr:     rspndr,
 	}
 }
 
-func (app *App) httpHandler(w http.ResponseWriter, r *http.Request) {
+func (app *App) translateHandler(w http.ResponseWriter, r *http.Request) {
 	from := r.URL.Query().Get("from")
 	to := r.URL.Query().Get("to")
 	text := r.URL.Query().Get("text")
@@ -28,7 +30,7 @@ func (app *App) httpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Call api.
-	err, translated := app.trnsltr.translate(from, to, text)
+	err, translated := app.trnsltrApi.translate(from, to, text)
 	if err != nil {
 		app.rspndr.Error(w, http.StatusInternalServerError, err.Error())
 		return
@@ -43,4 +45,30 @@ func (app *App) httpHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Return response.
 	app.rspndr.Success(w, string(translatedJson))
+}
+
+func (app *App) weatherHandler(w http.ResponseWriter, r *http.Request) {
+	// Prepare parameters.
+	city := r.URL.Query().Get("city")
+
+	if city == "" {
+		app.rspndr.Error(w, http.StatusBadRequest, "Missing request parameters.")
+		return
+	}
+
+	err, weather := app.weatherApi.Weather(city)
+	if err != nil {
+		app.rspndr.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// Convert api result to json.
+	weatherJson, err := json.Marshal(weather)
+	if err != nil {
+		app.rspndr.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// Return response.
+	app.rspndr.Success(w, string(weatherJson))
 }

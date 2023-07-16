@@ -4,24 +4,34 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
-type Translation struct {
+type TranslationResponse struct {
 	FromLng     string `json:"from"`
 	ToLng       string `json:"to"`
 	Source      string `json:"source"`
 	Translation string `json:"translation"`
 }
 
+type WeatherApiResponse struct {
+	City     string  `json:"city"`
+	Temp     float64 `json:"temp"`
+	Wind     float64 `json:"wind"`
+	Humidity float64 `json:"humidity"`
+}
+
 func main() {
 	port := ":8080"
 
 	rspndr := NewResponder("2006-01-02 15:04:05")
-	trnsltr := NewTranslator()
-	app := NewApp(trnsltr, rspndr)
+	trnsltrApi := NewTranslatorApi(os.Getenv("LECTO_API_KEY"))
+	weatherApi := NewWeatherApi(os.Getenv("WEATHER_API_KEY"))
 
-	http.HandleFunc("/translate", app.httpHandler)
+	app := NewApp(weatherApi, trnsltrApi, rspndr)
 
+	http.HandleFunc("/translate", app.translateHandler)
+	http.HandleFunc("/weather", app.weatherHandler)
 	fmt.Println("Server started on port " + port)
 	log.Fatal(http.ListenAndServe(port, nil))
 
