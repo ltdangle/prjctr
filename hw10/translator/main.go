@@ -14,7 +14,7 @@ type TranslationResponse struct {
 	Translation string `json:"translation"`
 }
 
-type WeatherApiResponse struct {
+type Weather struct {
 	City     string  `json:"city"`
 	Temp     float64 `json:"temp"`
 	Wind     float64 `json:"wind"`
