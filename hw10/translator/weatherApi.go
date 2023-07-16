@@ -26,7 +26,6 @@ func NewWeatherApi(apiKey string) *WeatherApi {
 func (w *WeatherApi) Weather(city string) (error, *Weather) {
 	// Call api.
 	url := fmt.Sprintf("https://api.weatherapi.com/v1/forecast.json?key=%s&q=%s&days=1", w.apiKey, city)
-	// url := "https://api.weatherapi.com/v1/forecast.json?key=s&q=s&days=1"
 	resp, err := http.Get(url)
 	if err != nil {
 		return errors.New("WeatherApi url: " + err.Error()), nil
@@ -36,6 +35,7 @@ func (w *WeatherApi) Weather(city string) (error, *Weather) {
 
 	respByte, _ := io.ReadAll(resp.Body)
 
+	// Unmarshall api response.
 	var data WeatherApiData
 	err = json.Unmarshal(respByte, &data)
 	if err != nil {
