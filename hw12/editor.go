@@ -22,17 +22,17 @@ func (e *Editor) AddStatAction(s TextStat) {
 }
 
 func (e *Editor) AddFormatter(f Formatter) {
-	key := fmt.Sprintf("s%d", len(e.Formatters)+1)
+	key := fmt.Sprintf("f%d", len(e.Formatters)+1)
 	e.Formatters[key] = f
 }
 
 func (e *Editor) Menu() string {
 	var formatters, stats string
-	for key := range e.Formatters {
-		formatters += fmt.Sprintf("%s: %s", key, "desc")
+	for key, formatter := range e.Formatters {
+		formatters += fmt.Sprintf("%s: %s\n", key,formatter.Description() )
 	}
 	for key := range e.Stats {
-		stats += fmt.Sprintf("%s: %s", key, "desc")
+		stats += fmt.Sprintf("%s: %s\n", key, "desc")
 	}
 
 	return fmt.Sprintf(`
