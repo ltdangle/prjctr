@@ -3,13 +3,14 @@ package main
 import "fmt"
 
 type Editor struct {
-	Text       string
+	Text       Text
 	Stats      map[string]TextStat
 	Formatters map[string]Formatter
 }
 
-func NewEditor() *Editor {
+func NewEditor(text Text) *Editor {
 	return &Editor{
+		Text:       text,
 		Stats:      make(map[string]TextStat),
 		Formatters: make(map[string]Formatter),
 	}
@@ -41,7 +42,7 @@ Text:
 Text statistics:
 %s
 
-Text actons:
+Text formatters:
 %s
-`, e.Text, formatters, stats)
+`, e.Text.Format(), stats, formatters)
 }

@@ -12,11 +12,11 @@ type Text struct {
 	Text string
 }
 
-func NewText(text string) *Text {
-	return &Text{Text: text}
+func NewText(text string) Text {
+	return Text{Text: text}
 }
 
-func (t *Text) Format() string {
+func (t Text) Format() string {
 	return t.Text
 }
 
