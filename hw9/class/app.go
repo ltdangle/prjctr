@@ -51,7 +51,7 @@ func (app *App) httpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check that teacher hass access to student's class.
-	if student.class != teacher.Class {
+	if student.class != teacher.class {
 		app.rspndr.Error(w, http.StatusBadRequest, "Teacher not authorized to access the class.")
 		return
 	}

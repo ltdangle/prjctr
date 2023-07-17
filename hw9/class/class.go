@@ -11,7 +11,7 @@ func NewClass() *Class {
 }
 
 func (c *Class) SetTeacher(t *Teacher) {
-	t.Class = c
+	t.class = c
 	c.Teacher = t
 }
 func (c *Class) AddStudent(s *Student) {

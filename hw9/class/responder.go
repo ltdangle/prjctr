@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 )
@@ -49,9 +48,5 @@ func (rspndr *Responder) Success(w http.ResponseWriter, payload interface{}) {
 	// Send response.
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	err := json.NewEncoder(w).Encode(r)
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	json.NewEncoder(w).Encode(r)
 }

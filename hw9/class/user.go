@@ -25,7 +25,7 @@ func NewStudent(id int, name string) *Student {
 // Teacher.
 type Teacher struct {
 	User
-	Class *Class
+	class *Class
 }
 
 func NewTeacher(id int, name string) *Teacher {
