@@ -1,15 +1,8 @@
 package main
 
-type Student struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-func NewStudent(id int, name string) *Student {
-	return &Student{Id: id, Name: name}
-}
-
 type Class struct {
+	Id       int        `json:"id"`
+	Teacher  *Teacher   `json:"teacher"`
 	Students []*Student `json:"students"`
 }
 
@@ -17,15 +10,20 @@ func NewClass() *Class {
 	return &Class{}
 }
 
-func (c *Class) addStudent(s *Student) {
+func (c *Class) SetTeacher(t *Teacher) {
+	t.Class = c
+	c.Teacher = t
+}
+func (c *Class) AddStudent(s *Student) {
+	s.class = c
 	c.Students = append(c.Students, s)
 }
 
-func (c *Class) all() []*Student {
+func (c *Class) AllStudents() []*Student {
 	return c.Students
 }
 
-func (c *Class) findById(id int) *Student {
+func (c *Class) FindById(id int) *Student {
 	for _, student := range c.Students {
 		if student.Id == id {
 			return student
