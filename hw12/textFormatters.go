@@ -2,13 +2,14 @@ package main
 
 import "strings"
 
+// Formatter interface.
 type Formatter interface {
 	// TODO: rename to Text()
 	Format() string
 	Description() string
 }
 
-// Text struct.
+// Text struct (implements Formatter interface).
 type Text struct {
 	Text string
 }
@@ -35,7 +36,7 @@ func NewNoSpacesFormatter(formatter Formatter) *NoSpacesFormatter {
 }
 
 func (f *NoSpacesFormatter) Format() string {
-	return strings.ReplaceAll(f.Format(), " ", "")
+	return strings.ReplaceAll(f.Formatter.Format(), " ", "")
 }
 func (f *NoSpacesFormatter) Description() string {
 	return f.Formatter.Description() + "No spaces. "
@@ -51,7 +52,7 @@ func NewUpperCaseWordsFormatter(formatter Formatter) *UpperCaseWordsFormatter {
 }
 
 func (f *UpperCaseWordsFormatter) Format() string {
-	words := strings.Split(f.Format(), " ")
+	words := strings.Split(f.Formatter.Format(), " ")
 	for i := 0; i < len(words); i++ {
 		words[i] = strings.ToUpper(words[i])
 	}
@@ -59,4 +60,24 @@ func (f *UpperCaseWordsFormatter) Format() string {
 }
 func (f *UpperCaseWordsFormatter) Description() string {
 	return f.Formatter.Description() + "Words to uppercase. "
+}
+
+// LowerCaseWordsFormatter.
+type LowerCaseWordsFormatter struct {
+	Formatter Formatter
+}
+
+func NewLowerCaseWordsFormatter(formatter Formatter) *LowerCaseWordsFormatter {
+	return &LowerCaseWordsFormatter{formatter}
+}
+
+func (f *LowerCaseWordsFormatter) Format() string {
+	words := strings.Split(f.Formatter.Format(), " ")
+	for i := 0; i < len(words); i++ {
+		words[i] = strings.ToLower(words[i])
+	}
+	return strings.Join(words, " ")
+}
+func (f *LowerCaseWordsFormatter) Description() string {
+	return f.Formatter.Description() + "Words to lowercase. "
 }

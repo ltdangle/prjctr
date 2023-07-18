@@ -25,24 +25,3 @@ func (e *Editor) AddFormatter(f Formatter) {
 	key := fmt.Sprintf("f%d", len(e.Formatters)+1)
 	e.Formatters[key] = f
 }
-
-func (e *Editor) Menu() string {
-	var formatters, stats string
-	for key, formatter := range e.Formatters {
-		formatters += fmt.Sprintf("%s: %s\n", key,formatter.Description() )
-	}
-	for key := range e.Stats {
-		stats += fmt.Sprintf("%s: %s\n", key, "desc")
-	}
-
-	return fmt.Sprintf(`
-Text:
-%s
-
-Text statistics:
-%s
-
-Text formatters:
-%s
-`, e.Text.Format(), stats, formatters)
-}

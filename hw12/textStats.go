@@ -2,40 +2,48 @@ package main
 
 import "regexp"
 
-// Text statistics interface.
+// TextStat statistics interface.
 type TextStat interface {
-	// Statistic action.
-	Count(text string) int
+	// Count Statistic action.
+	Count() int
+	// Description Statistic description.
+	Description() string
 }
 
-// Whitespace counter implementation using loop.
-type SpaceCounterLoop struct{}
+// SpaceCounterLoop whitespace counter implementation using loop.
+type SpaceCounterLoop struct{ text Text }
 
-func NewWhiteSpaceCounter() *SpaceCounterLoop {
-	return &SpaceCounterLoop{}
+func NewWhiteSpaceCounter(text Text) *SpaceCounterLoop {
+	return &SpaceCounterLoop{text: text}
 }
 
-func (c *SpaceCounterLoop) Count(text string) int {
+func (c *SpaceCounterLoop) Count() int {
 	counter := 0
-	for i := 0; i < len(text); i++ {
-		if text[i:i+1] == " " {
+	for i := 0; i < len(c.text.Text); i++ {
+		if c.text.Text[i:i+1] == " " {
 			counter++
 		}
 	}
 	return counter
 }
 
-// Whitespace counter implementation using regex.
-type SpaceCounterRegex struct{}
-
-func NewWhiteSpaceCounterRegex() *SpaceCounterRegex {
-	return &SpaceCounterRegex{}
+func (c *SpaceCounterLoop) Description() string {
+	return "Counts spaces via loop."
 }
 
-func (c *SpaceCounterRegex) Count(text string) int {
+// SpaceCounterRegex whitespace counter implementation using regex.
+type SpaceCounterRegex struct{ text Text }
+
+func NewWhiteSpaceCounterRegex(text Text) *SpaceCounterRegex {
+	return &SpaceCounterRegex{text: text}
+}
+
+func (c *SpaceCounterRegex) Count() int {
 	re := regexp.MustCompile(` `)
-	matches := re.FindAllString(text, -1)
+	matches := re.FindAllString(c.text.Text, -1)
 
 	return len(matches)
-
+}
+func (c *SpaceCounterRegex) Description() string {
+	return "Counts spaces via regex."
 }
