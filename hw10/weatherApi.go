@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 )
+
 // Weather struct.
 type Weather struct {
 	City     string  `json:"city"`
@@ -38,7 +39,7 @@ func (w *WeatherApi) Weather(city string) (error, *Weather) {
 	if err != nil {
 		return errors.New("WeatherApi url: " + err.Error()), nil
 	} else if resp.StatusCode != http.StatusOK {
-		return errors.New(fmt.Sprintf("WeatherApi returned non-OK status %d", resp.StatusCode)), nil
+		return fmt.Errorf("WeatherApi returned non-OK status %d", resp.StatusCode), nil
 	}
 
 	respByte, _ := io.ReadAll(resp.Body)

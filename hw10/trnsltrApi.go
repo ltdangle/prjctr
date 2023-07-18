@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"io"
 	"net/http"
 	"strings"
@@ -20,11 +21,11 @@ type Translation struct {
 // Api response struct.
 type LectoItem struct {
 	To         string   `json:"to"`
-	Translated []string `json:"translated"`
+	Translated []string `json:"translated" validate:"required,min=1,dive,required"`
 }
 
 type LectoResponse struct {
-	Translations         []LectoItem `json:"translations"`
+	Translations         []LectoItem `json:"translations" validate:"required,min=1,dive,required"`
 	From                 string      `json:"from"`
 	TranslatedCharacters int         `json:"translated_characters"`
 }
@@ -67,11 +68,18 @@ func (t *TranslatorApi) translate(from string, to string, text string) (error, *
 	}
 	responseJSON := string(body)
 
-	// Validate (cast) json into response object.
+	// Cast json into response object.
 	var lectoResponse LectoResponse
 	decoder := json.NewDecoder(strings.NewReader(responseJSON))
 	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&lectoResponse)
+	if err != nil {
+		return err, nil
+	}
+
+	// Validate api response.
+	validate := validator.New()
+	err = validate.Struct(lectoResponse)
 	if err != nil {
 		return err, nil
 	}
