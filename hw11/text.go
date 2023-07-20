@@ -16,7 +16,9 @@ func main() {
 
 	s := string(bytes)
 
-	regex := regexp.MustCompile(`\b[бвгґджзклмнпрстфхцчшщ]\S*\s`)
+	// Вcі слова з великої літери, що закінчуються на голосну
+	regex := regexp.MustCompile(`\p{Lu}\p{Ll}*[аеєиіїоуюя]`)
+
 	matches := regex.FindAllString(s, -1)
 
 	// Print the matches.
