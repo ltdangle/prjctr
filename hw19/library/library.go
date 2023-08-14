@@ -13,7 +13,7 @@ type Library struct {
 type IDb interface {
 	IndexBook(book *Book)
 	Find(title BookTitle) (*Book, error)
-	Update(book Book) error
+	Update(book *Book) error
 }
 
 // NewLibrary constructor.
@@ -81,16 +81,17 @@ func (l *Library) CheckoutBook(title BookTitle, customer *Customer) (*Book, erro
 	return book, nil
 }
 
-func (l *Library) ReturnBook(book Book) error {
+func (l *Library) ReturnBook(book *Book) error {
 	foundBook, err := l.db.Find(book.Title)
-
 	if err != nil {
 		return err
 	}
 
-	if foundBook.Id == book.Id {
-		foundBook.IsCheckedOut = false
+	if foundBook.Id != book.Id {
+		return errors.New("trying to return wrong book")
 	}
+
+	foundBook.IsCheckedOut = false
 
 	err = l.db.Update(book)
 	if err != nil {

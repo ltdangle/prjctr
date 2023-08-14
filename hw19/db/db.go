@@ -32,7 +32,7 @@ func (db *Db) Find(title library.BookTitle) (*library.Book, error) {
 	return nil, errors.New("could not find book location in db")
 }
 
-func (db *Db) findRecordUuid(book library.Book) (RecordUuid, error) {
+func (db *Db) findRecordUuid(book *library.Book) (RecordUuid, error) {
 	for recordUuid, b := range db.storage {
 		if b.Id == book.Id {
 			return recordUuid, nil
@@ -41,7 +41,7 @@ func (db *Db) findRecordUuid(book library.Book) (RecordUuid, error) {
 	return "", nil
 }
 
-func (db *Db) Update(book library.Book) error {
+func (db *Db) Update(book *library.Book) error {
 	b, err := db.Find(book.Title)
 	if err != nil {
 		return err

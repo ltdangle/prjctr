@@ -30,13 +30,21 @@ func main() {
 	_ = lib.AddBook(book2)
 	_ = lib.AddBook(book3)
 
-	// Get our book from lib.
-	myBook, err := lib.CheckoutBook("Little Prince", customer)
+	// Check our book from lib.
+	checkedOutBook, err := lib.CheckoutBook("Little Prince", customer)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	fmt.Println(myBook)
+	fmt.Printf("Book you checked out: %v\n", checkedOutBook)
+
+	// Return our book to the lib.
+	wrongBook := library.NewBook("wrong uuid", "Little Prince")
+	err = lib.ReturnBook(wrongBook)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }
 
 func _randomUuid() library.BookUuid {
