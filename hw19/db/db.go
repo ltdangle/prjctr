@@ -8,10 +8,6 @@ import (
 
 type RecordUuid string
 
-type BookRecord struct {
-	bookShelfId library.BookshelfId
-	BookTitle   library.BookTitle
-}
 type Db struct {
 	storage map[RecordUuid]*library.Book
 }
@@ -27,11 +23,11 @@ func (db *Db) IndexBook(book *library.Book) {
 	db.storage[RecordUuid] = book
 }
 
-func (db *Db) Find(title library.BookTitle) (library.BookshelfId, error) {
+func (db *Db) Find(title library.BookTitle) (*library.Book, error) {
 	for _, book := range db.storage {
 		if book.Title == title {
-			return book.BookShelfId, nil
+			return book, nil
 		}
 	}
-	return "", errors.New("could not find book location in db")
+	return nil, errors.New("could not find book location in db")
 }

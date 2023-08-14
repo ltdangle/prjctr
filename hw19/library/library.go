@@ -12,7 +12,7 @@ type Library struct {
 // IDb database interface.
 type IDb interface {
 	IndexBook(book *Book)
-	Find(title BookTitle) (BookshelfId, error)
+	Find(title BookTitle) (*Book, error)
 }
 
 // NewLibrary constructor.
@@ -56,17 +56,17 @@ func (l *Library) AddBook(book *Book) error {
 
 // CheckoutBook retrieves book from the library.
 func (l *Library) CheckoutBook(title BookTitle) (*Book, error) {
-	bookshelfId, err := l.db.Find(title)
+	b, err := l.db.Find(title)
 	if err != nil {
 		return nil, err
 	}
 
-	_, bookshelfExists := l.bookshelfs[bookshelfId]
+	_, bookshelfExists := l.bookshelfs[b.BookShelfId]
 	if !bookshelfExists {
 		return nil, errors.New("could not find bookshelf")
 	}
 
-	book, bookExists := l.bookshelfs[bookshelfId].Book(title)
+	book, bookExists := l.bookshelfs[b.BookShelfId].Book(title)
 	if !bookExists {
 		return nil, errors.New("could not find the book on the bookshelf")
 	}
