@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	db2 "hw19/db"
 	library "hw19/library"
 )
 
@@ -16,7 +17,7 @@ func main() {
 	bookshelf1 := library.NewBookshelf("bookshelf1", 2)
 	bookshelf2 := library.NewBookshelf("bookshelf2", 10)
 
-	db := library.NewDb()
+	db := db2.NewDb()
 
 	lib := library.NewLibrary(db)
 	lib.SetManager(manager)
