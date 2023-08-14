@@ -38,13 +38,20 @@ func main() {
 
 	fmt.Printf("Book you checked out: %v\n", checkedOutBook)
 
-	// Return our book to the lib.
+	// Return wrong book to the lib and see an error.
 	wrongBook := library.NewBook("wrong uuid", "Little Prince")
 	err = lib.ReturnBook(wrongBook)
 	if err != nil {
 		fmt.Println(err)
 	}
 
+	// Return correct book.
+	err = lib.ReturnBook(checkedOutBook)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("You've returned checked out book.")
+	}
 }
 
 func _randomUuid() library.BookUuid {
