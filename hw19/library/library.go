@@ -2,15 +2,21 @@ package library
 
 import "errors"
 
-// Manager embeds User.
-
+// Library struct.
 type Library struct {
 	manager    *Manager
 	bookshelfs map[BookshelfId]*Bookshelf
-	db         *Db
+	db         IDb
 }
 
-func NewLibrary(db *Db) *Library {
+// IDb database interface.
+type IDb interface {
+	IndexBook(bookshelfId BookshelfId, bookTitle BookTitle)
+	Find(title BookTitle) (BookshelfId, error)
+}
+
+// NewLibrary constructor.
+func NewLibrary(db IDb) *Library {
 	return &Library{
 		bookshelfs: make(map[BookshelfId]*Bookshelf),
 		db:         db,
@@ -66,8 +72,3 @@ func (l *Library) CheckoutBook(title BookTitle) (*Book, error) {
 
 	return book, nil
 }
-
-// TODO:
-//func (l *Library) ReturnBook(title BookTitle) error {
-//
-//}

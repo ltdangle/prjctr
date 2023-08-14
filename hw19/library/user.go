@@ -1,6 +1,6 @@
 package library
 
-// User.
+// User struct.
 type User struct {
 	name string
 }
