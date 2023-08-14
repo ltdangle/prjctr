@@ -27,9 +27,10 @@ func main() {
 	_ = lib.AddBook(book3)
 
 	// Get our book from lib.
-	myBook, err := lib.Book("Little Prince")
+	myBook, err := lib.CheckoutBook("Little Prince")
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	fmt.Println(myBook)
 }

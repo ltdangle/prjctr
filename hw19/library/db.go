@@ -1,21 +1,29 @@
 package library
 
-import "errors"
+import (
+	"errors"
+	"github.com/google/uuid"
+)
+
+type RecordUuid string
 
 type BookRecord struct {
 	bookShelfId BookshelfId
 	BookTitle   BookTitle
 }
 type Db struct {
-	storage []*BookRecord
+	storage map[RecordUuid]*BookRecord
 }
 
 func NewDb() *Db {
-	return &Db{}
+	return &Db{
+		storage: make(map[RecordUuid]*BookRecord),
+	}
 }
 
 func (db *Db) IndexBook(bookshelfId BookshelfId, bookTitle BookTitle) {
-	db.storage = append(db.storage, &BookRecord{bookShelfId: bookshelfId, BookTitle: bookTitle})
+	RecordUuid := RecordUuid(uuid.New().String())
+	db.storage[RecordUuid] = &BookRecord{bookShelfId: bookshelfId, BookTitle: bookTitle}
 }
 
 func (db *Db) Find(title BookTitle) (BookshelfId, error) {

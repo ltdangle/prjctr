@@ -47,8 +47,8 @@ func (l *Library) AddBook(book *Book) error {
 	return nil
 }
 
-// Book retrieves book from the library.
-func (l Library) Book(title BookTitle) (*Book, error) {
+// CheckoutBook retrieves book from the library.
+func (l *Library) CheckoutBook(title BookTitle) (*Book, error) {
 	bookshelfId, err := l.db.Find(title)
 	if err != nil {
 		return nil, err
@@ -66,3 +66,8 @@ func (l Library) Book(title BookTitle) (*Book, error) {
 
 	return book, nil
 }
+
+// TODO:
+//func (l *Library) ReturnBook(title BookTitle) error {
+//
+//}
