@@ -2,9 +2,11 @@ package library
 
 // Book struct.
 type Book struct {
-	title BookTitle
+	Title        BookTitle
+	BookShelfId  BookshelfId
+	CheckedOutBy UserId
 }
 
 func NewBook(title BookTitle) *Book {
-	return &Book{title: title}
+	return &Book{Title: title}
 }

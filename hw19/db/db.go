@@ -13,24 +13,24 @@ type BookRecord struct {
 	BookTitle   library.BookTitle
 }
 type Db struct {
-	storage map[RecordUuid]*BookRecord
+	storage map[RecordUuid]*library.Book
 }
 
 func NewDb() *Db {
 	return &Db{
-		storage: make(map[RecordUuid]*BookRecord),
+		storage: make(map[RecordUuid]*library.Book),
 	}
 }
 
-func (db *Db) IndexBook(bookshelfId library.BookshelfId, bookTitle library.BookTitle) {
+func (db *Db) IndexBook(book *library.Book) {
 	RecordUuid := RecordUuid(uuid.New().String())
-	db.storage[RecordUuid] = &BookRecord{bookShelfId: bookshelfId, BookTitle: bookTitle}
+	db.storage[RecordUuid] = book
 }
 
 func (db *Db) Find(title library.BookTitle) (library.BookshelfId, error) {
-	for _, bookRecord := range db.storage {
-		if bookRecord.BookTitle == title {
-			return bookRecord.bookShelfId, nil
+	for _, book := range db.storage {
+		if book.Title == title {
+			return book.BookShelfId, nil
 		}
 	}
 	return "", errors.New("could not find book location in db")

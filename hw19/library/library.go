@@ -11,7 +11,7 @@ type Library struct {
 
 // IDb database interface.
 type IDb interface {
-	IndexBook(bookshelfId BookshelfId, bookTitle BookTitle)
+	IndexBook(book *Book)
 	Find(title BookTitle) (BookshelfId, error)
 }
 
@@ -32,23 +32,24 @@ func (l *Library) AddBookshelf(bookshelf *Bookshelf) {
 }
 
 func (l *Library) AddBook(book *Book) error {
-	var bookLocation BookshelfId
+	var bookshelfId BookshelfId
 	// adds book to next available bookcase
 	for _, bookshelf := range l.bookshelfs {
 		err := bookshelf.addBook(book)
 		if err != nil {
 			continue
 		}
-		bookLocation = bookshelf.id
+		bookshelfId = bookshelf.id
 		break
 	}
 
-	if bookLocation == "" {
+	if bookshelfId == "" {
 		return errors.New("could not add book to bookshelf")
 	}
 
-	// adds location and title to the database
-	l.db.IndexBook(bookLocation, BookTitle(book.title))
+	// adds location and Title to the database
+	book.BookShelfId = bookshelfId
+	l.db.IndexBook(book)
 
 	return nil
 }

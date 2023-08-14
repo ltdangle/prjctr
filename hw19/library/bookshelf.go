@@ -34,7 +34,7 @@ func (s *Bookshelf) addBook(book *Book) error {
 // Book returns book from the bookshelf.
 func (s *Bookshelf) Book(title BookTitle) (*Book, bool) {
 	for location, book := range s.books {
-		if book.title == title {
+		if book.Title == title {
 			return s.books[location], true
 		}
 	}

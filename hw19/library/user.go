@@ -1,7 +1,10 @@
 package library
 
+type UserId string
+
 // User struct.
 type User struct {
+	id   UserId
 	name string
 }
 
