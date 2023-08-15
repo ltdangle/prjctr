@@ -1,12 +1,23 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
 	"time"
 )
+
+const (
+	FileCreatedEvent     = "file_created"
+	FileSizeChangedEvent = "filesize_changed"
+	FileRemovedEvent     = "file_removed"
+)
+
+// FsChangedEvent filesystem changed event.
+type FsChangedEvent struct {
+	fileName  FileName
+	eventName string
+}
 
 type DirMonitor struct {
 	path string
@@ -34,17 +45,17 @@ func (m *DirMonitor) Watch() {
 
 		newDir := m.collectDirData(m.path)
 
-		err := m.compareDirContents(dir, newDir)
-		if err != nil {
-			fmt.Println(err.Error())
-			m.publish()
+		changed, event := m.compareDirContents(dir, newDir)
+		if changed {
+			fmt.Println(event)
+			m.publish(event)
 			dir = newDir
 		}
 	}
 }
 
-func (m *DirMonitor) publish() {
-	errChan := m.pub.Publish("dircontents_changed")
+func (m *DirMonitor) publish(event *FsChangedEvent) {
+	errChan := m.pub.Publish(event)
 	go func() {
 		for err := range errChan {
 			if err != nil {
@@ -71,15 +82,30 @@ func (m *DirMonitor) collectDirData(path string) *DirContents {
 		if err != nil {
 			continue
 		}
-		dir.contents[file.Name()] = fileInfo.Size()
+		dir.contents[FileName(file.Name())] = FileSize(fileInfo.Size())
 	}
 
 	return dir
 }
 
-func (m *DirMonitor) compareDirContents(d1 *DirContents, d2 *DirContents) error {
-	if len(d1.contents) != len(d2.contents) {
-		return errors.New("Directory contents have changed.")
+func (m *DirMonitor) compareDirContents(original *DirContents, new *DirContents) (changed bool, event *FsChangedEvent) {
+
+	for newFileName, newFileSize := range new.contents {
+		originalFileSize, exists := original.contents[newFileName]
+		if !exists {
+			return true, &FsChangedEvent{fileName: newFileName, eventName: FileCreatedEvent}
+		}
+		if originalFileSize != newFileSize {
+			return true, &FsChangedEvent{fileName: newFileName, eventName: FileSizeChangedEvent}
+		}
 	}
-	return nil
+
+	for originalFileName := range original.contents {
+		_, exists := new.contents[originalFileName]
+		if !exists {
+			return true, &FsChangedEvent{fileName: originalFileName, eventName: FileRemovedEvent}
+		}
+	}
+
+	return false, nil
 }

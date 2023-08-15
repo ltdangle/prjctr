@@ -1,9 +1,12 @@
 package main
 
+type FileName string
+type FileSize int64
+
 type DirContents struct {
-	contents map[string]int64
+	contents map[FileName]FileSize
 }
 
 func NewDirContents() *DirContents {
-	return &DirContents{contents: make(map[string]int64)}
+	return &DirContents{contents: make(map[FileName]FileSize)}
 }
