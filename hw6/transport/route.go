@@ -1,14 +1,14 @@
 package transport
 
 type route struct {
-	transport []TransportI
+	transport []Transport
 }
 
 func NewRoute() *route {
 	return &route{}
 }
 
-func (r *route) AddTransport(t TransportI) {
+func (r *route) AddTransport(t Transport) {
 	r.transport = append(r.transport, t)
 }
 

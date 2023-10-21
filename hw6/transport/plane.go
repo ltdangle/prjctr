@@ -1,6 +1,15 @@
 package transport
 
-type plane struct{}
+import "errors"
+
+type plane struct {
+	registration *registration
+	passengers   []*passenger
+}
+
+func NewPlane(registration *registration) *plane {
+	return &plane{registration: registration}
+}
 
 func (p *plane) Name() string {
 	return "Plane"
@@ -14,17 +23,29 @@ func (p *plane) Stop() {
 	println("Plane stopped")
 }
 
-func (p *plane) ChangeSpeed() {
+func (p *plane) ChangeSpeed(int) error {
 	println("Plane changed speed")
+	return nil
 }
 
-func (p *plane) TakePassengers() {
-	println("Plane took passengers")
+func (pl *plane) TakePassengers(p *passenger) error {
+	// Check if passenger is in registration list.
+	found := false
+	for _, pr := range pl.registration.passengers {
+		if p == pr {
+			found = true
+		}
+	}
+
+	if !found {
+		return errors.New("passenger not found in registration")
+	}
+
+	pl.passengers = append(pl.passengers, p)
+
+	return nil
 }
 
 func (p *plane) DropPassengers() {
 	println("Plane dropped passengers")
-}
-func NewPlane() *plane {
-	return &plane{}
 }
