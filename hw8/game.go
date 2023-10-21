@@ -6,22 +6,25 @@ import (
 	"math/rand"
 	"os"
 	"os/signal"
+	"sort"
 	"sync"
 	"syscall"
 	"time"
 )
 
 type round struct {
-	id int
+	id     int
+	number int
 }
 type player struct {
 	id     int
 	gameCh chan round
 }
 type guess struct {
-	roundId  int
-	playerId int
-	number   int
+	roundId   int
+	playerId  int
+	number    int
+	guessedOn time.Time
 }
 type winner struct {
 	roundId  int
@@ -52,7 +55,7 @@ func main() {
 		wg.Add(1)
 		go playerRtn(ctx, p, guessChan, &wg)
 	}
-	
+
 	// Init round generator.
 	wg.Add(1)
 	go roundGeneratorRtn(ctx, players, refChan, &wg)
@@ -74,22 +77,51 @@ func main() {
 func refereeRtn(ctx context.Context, players []*player, guessChan chan guess, refChan chan round, winnerCh chan winner, wg *sync.WaitGroup) {
 	defer wg.Done()
 
+	playedRounds := make(map[int][]guess)
+
 	for {
 		select {
 		case <-ctx.Done():
 			fmt.Printf("\nReferee is shutting down....")
 			return
 		case guess := <-guessChan:
+			playedRounds[guess.roundId] = append(playedRounds[guess.roundId], guess)
 			fmt.Printf("\nReferee received: [round: %d, player: %d, number: %d]", guess.roundId, guess.playerId, guess.number)
+			fmt.Printf("\nPlayed rounds: %v", playedRounds)
 		case round := <-refChan:
 			fmt.Printf("\nReferee received new round notification for round %d", round.id)
-			// Randomly calculate winner for prev. round.
-			if round.id > 0 {
-				prevRound := round.id - 1
-				winnerId := rand.Intn(len(players))
-				fmt.Printf("\nThe winner for %d is player %d !", prevRound, winnerId)
-				winnerCh <- winner{roundId: prevRound, playerId: winnerId}
+
+			// Skip winner calculation on the first round notification
+			if round.id == 0 {
+				continue
 			}
+
+			// Calculate winner for prev. round.
+			var winners []int
+			prevRound := round.id - 1
+			// Collect all winners
+			for _, guess := range playedRounds[prevRound] {
+				if round.number == guess.number {
+					winners = append(winners, guess.playerId)
+				}
+			}
+
+			w := winner{roundId: prevRound, playerId: -1}
+
+			
+			if len(winners) == 1 { // One winner
+				w.playerId = winners[0]
+			} else if len(winners) > 1 { // Several winners - find who send the winning guess first
+				sort.Slice(playedRounds[prevRound], func(i, j int) bool {
+					return playedRounds[prevRound][i].guessedOn.Before(playedRounds[prevRound][j].guessedOn)
+				})
+				w.playerId = winners[0]
+			}
+
+			fmt.Printf("\nThe winners for round %d is player %d !", prevRound, w.playerId)
+
+			winnerCh <- winner{roundId: prevRound, playerId: w.playerId}
+
 		}
 	}
 }
@@ -105,7 +137,7 @@ func roundGeneratorRtn(ctx context.Context, players []*player, refChan chan roun
 	roundFn := func(t time.Time) {
 		fmt.Printf("\nNew round at: %v", t)
 
-		round := round{id: roundCount}
+		round := round{id: roundCount, number: rand.Intn(4)}
 
 		for _, player := range players {
 			player.gameCh <- round
@@ -141,7 +173,7 @@ func playerRtn(ctx context.Context, p *player, guesses chan guess, wg *sync.Wait
 			fmt.Printf("\nGorutine for player %d is shutting down...", p.id)
 			return
 		case round := <-p.gameCh:
-			guess := guess{roundId: round.id, playerId: p.id, number: rand.Intn(5)}
+			guess := guess{roundId: round.id, playerId: p.id, number: rand.Intn(4), guessedOn: time.Now()}
 			time.Sleep(time.Duration(guess.number) * time.Second)
 			guesses <- guess
 			fmt.Printf("\nPlayer %d for round number %d sent guess %d", p.id, round.id, guess.number)
